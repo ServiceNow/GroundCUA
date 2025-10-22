@@ -115,12 +115,12 @@ cd GroundCUA
 pip install -r requirements.txt
 
 # Install LLaMA-Factory for SFT training
-cd groundnext-sft/LLaMA-Factory/
+cd LLaMA-Factory/
 pip install --no-deps -e .
-cd ../..
+cd ..
 
 # Install verl for RL training
-cd groundnext-rl/
+cd verl/
 pip install -e .
 cd ..
 ```
@@ -187,8 +187,8 @@ We provide a complete data pipeline for creating human-grounded datasets compati
 ### 2. Data Preparation
 
 Place your training data in the appropriate directories:
-- SFT data: `groundnext-sft/LLaMA-Factory/data/`
-- RL data: `groundnext-rl/data/GroundCUA/`
+- SFT data: `LLaMA-Factory/data/`
+- RL data: `rl/data/`
 
 ---
 
@@ -198,9 +198,9 @@ Place your training data in the appropriate directories:
 
 We use [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory) for initial supervised fine-tuning on human demonstrations.
 
-Training configurations are located in `groundnext-sft/config/sft/` directory.
+Training configurations are located in `sft/config/sft/` directory.
 
-Example SFT configuration (`groundnext-sft/config/sft/groundnext-3b.json`):
+Example SFT configuration (`sft/config/sft/groundnext-3b.json`):
 
 ```json
 {
@@ -208,9 +208,9 @@ Example SFT configuration (`groundnext-sft/config/sft/groundnext-3b.json`):
     "do_train": true,
     "model_name_or_path": "Qwen/Qwen2.5-VL-3B-Instruct",
     "dataset": "groundcua-sft",
-    "dataset_dir": "/path/to/groundnext-sft/LLaMA-Factory/data/",
+    "dataset_dir": "/path/to/LLaMA-Factory/data/",
     "template": "qwen2_vl",
-    "output_dir": "/path/to/groundnext-sft/outputs/GroundNext-sft-3b",
+    "output_dir": "/path/to/sft/outputs/GroundNext-sft-3b",
     "learning_rate": 3e-6,
     "num_train_epochs": 1.0,
     "bf16": true,
@@ -221,25 +221,25 @@ Example SFT configuration (`groundnext-sft/config/sft/groundnext-3b.json`):
 **Run SFT Training**:
 
 ```bash
-cd groundnext-sft/
-python main.py train config/sft/groundnext-sft-3b.json
-python main.py train config/sft/groundnext-sft-7b.json
+cd LLaMA-Factory/
+python main.py train ../sft/config/sft/groundnext-3b.json
+python main.py train ../sft/config/sft/groundnext-7b.json
 ```
 
 ### Reinforcement Learning (RLOO) with verl
 
 We use the [verl](https://github.com/volcengine/verl) framework for reinforcement learning with the RLOO algorithm. This builds upon the SFT checkpoints to further optimize the policy using reward-based learning.
 
-Training scripts are located in `groundnext-rl/recipe/groundnext/` directory.
+Training scripts are located in `rl/recipe/groundnext/` directory.
 
 **Run RL Training**:
 
 ```bash
 # For 3B model
-./groundnext-rl/recipe/groundnext/groundnext-3b.sh
+./rl/recipe/groundnext/groundnext-3b.sh
 
 # For 7B model  
-./groundnext-rl/recipe/groundnext/groundnext-7b.sh
+./rl/recipe/groundnext/groundnext-7b.sh
 ```
 
 **Key RL Configuration Parameters**:
@@ -305,16 +305,17 @@ GroundCUA/
 │   ├── data.py                 # Data loading utilities
 │   ├── prompts.py              # Prompt processing
 │   └── models/                 # Model implementations
-├── groundnext-sft/             # Supervised Fine-tuning
-│   ├── config/                 # Training configurations
-│   │   └── sft/               # SFT-specific configs
-│   └── LLaMA-Factory/         # LLaMA-Factory framework
-│       └── data/              # Training data
-└── groundnext-rl/             # Reinforcement Learning
-    ├── recipe/                # Training recipes
-    │   └── groundnext/       # GroundNext-specific scripts
-    ├── verl/                  # verl framework
-    └── data/                  # RL training data
+├── sft/                        # Supervised Fine-tuning
+│   └── config/                 # Training configurations
+│       ├── sft/               # SFT-specific configs
+│       └── deepspeed/         # DeepSpeed configurations
+├── LLaMA-Factory/              # LLaMA-Factory framework
+│   └── data/                  # SFT training data
+├── rl/                         # Reinforcement Learning
+│   ├── recipe/                # Training recipes
+│   │   └── groundnext/       # GroundNext-specific scripts
+│   └── data/                  # RL training data
+└── verl/                       # verl framework
 ```
 
 ---
@@ -328,11 +329,11 @@ conda activate groundcua
 pip install -r requirements.txt
 
 # Run SFT training
-cd groundnext-sft/
-python main.py train config/sft/groundnext-sft-3b.json
+cd LLaMA-Factory/
+python main.py train ../sft/config/sft/groundnext-3b.json
 
 # Run RL training
-./groundnext-rl/recipe/groundnext/groundnext-3b.sh
+./rl/recipe/groundnext/groundnext-3b.sh
 
 # Evaluate model
 cd eval/
@@ -347,8 +348,8 @@ python eval.py --model_name_or_path /path/to/trained/model
 
 1. **Format your demonstration data** according to the schemas above
 2. **Place data files** in appropriate directories:
-   - SFT: `groundnext-sft/LLaMA-Factory/data/`
-   - RL: `groundnext-rl/data/GroundCUA/`
+   - SFT: `LLaMA-Factory/data/`
+   - RL: `rl/data/`
 3. **Update dataset configurations** in config files
 4. **Run training** with custom configurations
 

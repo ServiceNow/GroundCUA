@@ -1,0 +1,40 @@
+[
+    {
+        "unique_id": "e7a46468a69ed73431aa6d15228648655d80ded95363c01323a8d6d9a659feaa",
+        "image_path": "/mnt/stardoc/shravan/ui-vision-pro/Spyder/108982/screenshots/108982_gE-Z0y_pkpEJMf0ufVOZz_108982_after_action_8_1735655504261.png",
+        "bbox": [
+            1511.4798454096547,
+            136.616337148938,
+            1547.4798454096547,
+            162.63919429179512
+        ],
+        "text": "Save",
+        "category": "Others",
+        "ocr_text": null,
+        "instructions": {
+            "description": "The Save icon is located in the toolbar at the top of the Spyder interface. It is a small icon resembling a floppy disk, positioned between the upload icon and the print icon.",
+            "general_instruction": "Click the save icon located in the top right toolbar to save your current work.",
+            "simple_instruction": "Begin by positioning your cursor on `Save`."
+        },
+        "instruction": "Begin by positioning your cursor on 'Save'."
+    },
+    {
+        "unique_id": "e2cc4ef2d1f79e38a2806f2170ee6441e13eeb3e01f8b7d538361bad81ed3150",
+        "image_path": "/mnt/stardoc/shravan/ui-vision-pro/Bluefish/105456/screenshots/105456_XsA9cmRr_703smXakaSAE_105456_before_action_7_1735548704413.png",
+        "bbox": [
+            349.1338348388672,
+            137.08929552350725,
+            370.7338348388672,
+            152.51786695207866
+        ],
+        "text": "click",
+        "category": "Navigation",
+        "ocr_text": null,
+        "instructions": {
+            "description": "The target element is a small downward arrow located within a dropdown menu under the 'Open Recent' option in the File menu of the Bluefish application. It is positioned to the right of the file path '/Users/agatha/image.png'. This arrow is distinct from other elements in the menu and is used to expand or collapse the list of recent files.",
+            "functional_instruction": "Select a recently opened file to quickly access and edit it.",
+            "simple_instruction": "Where is the `click` element? Point to it with your mouse."
+        },
+        "instruction": "Position your cursor above the given UI item: 'click'"
+    }
+]

@@ -7,8 +7,8 @@ ulimit -n 65535
 
 /mnt/home/.conda/envs/verl-vllm/bin/python3.10 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=rloo \
-    data.train_files=./data/GroundCUA/train_data.parquet \
-    data.val_files=./data/GroundCUA/val_data.parquet \
+    data.train_files=/home/GroundCUA/rl/data/GroundCUA/train_data.parquet \
+    data.val_files=/home/GroundCUA/rl/data/GroundCUA/val_data.parquet \
     data.train_batch_size=64 \
     data.dataloader_num_workers=8 \
     data.max_prompt_length=10000 \
@@ -16,9 +16,9 @@ ulimit -n 65535
     data.filter_overlong_prompts=False \
     data.truncation='error' \
     data.image_key=images \
-    custom_reward_function.path=./recipe/groundnext/reward_clipped.py \
+    custom_reward_function.path=/home/GroundCUA/rl/recipe/groundnext/reward_clipped.py \
     custom_reward_function.name=gui_reward_function \
-    actor_rollout_ref.model.path=/path/to/sft/checkpoint/ \
+    actor_rollout_ref.model.path=/home/GroundCUA/sft/checkpoints/ \
     actor_rollout_ref.model.enable_activation_offload=True \
     actor_rollout_ref.model.enable_gradient_checkpointing=True \
     actor_rollout_ref.model.use_remove_padding=True \

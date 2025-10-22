@@ -210,7 +210,7 @@ Example SFT configuration (`sft/config/sft/groundnext-3b.json`):
     "dataset": "groundcua-sft",
     "dataset_dir": "/path/to/LLaMA-Factory/data/",
     "template": "qwen2_vl",
-    "output_dir": "/path/to/sft/outputs/GroundNext-sft-3b",
+    "output_dir": "/home/GroundCUA/sft/checkpoints/GroundNext-sft-3b",
     "learning_rate": 3e-6,
     "num_train_epochs": 1.0,
     "bf16": true,
@@ -225,6 +225,8 @@ cd LLaMA-Factory/
 python main.py train ../sft/config/sft/groundnext-3b.json
 python main.py train ../sft/config/sft/groundnext-7b.json
 ```
+
+**SFT Checkpoints**: Trained models will be saved to `sft/checkpoints/` directory.
 
 ### Reinforcement Learning (RLOO) with verl
 
@@ -241,6 +243,8 @@ Training scripts are located in `rl/recipe/groundnext/` directory.
 # For 7B model  
 ./rl/recipe/groundnext/groundnext-7b.sh
 ```
+
+**RL Checkpoints**: Trained models will be saved to `rl/checkpoints/` directory.
 
 **Key RL Configuration Parameters**:
 - **Algorithm**: RLOO (Reward Learning with Likelihood Optimization)
@@ -306,15 +310,17 @@ GroundCUA/
 │   ├── prompts.py              # Prompt processing
 │   └── models/                 # Model implementations
 ├── sft/                        # Supervised Fine-tuning
-│   └── config/                 # Training configurations
-│       ├── sft/               # SFT-specific configs
-│       └── deepspeed/         # DeepSpeed configurations
+│   ├── config/                 # Training configurations
+│   │   ├── sft/               # SFT-specific configs
+│   │   └── deepspeed/         # DeepSpeed configurations
+│   └── checkpoints/           # SFT model checkpoints
 ├── LLaMA-Factory/              # LLaMA-Factory framework
 │   └── data/                  # SFT training data
 ├── rl/                         # Reinforcement Learning
 │   ├── recipe/                # Training recipes
 │   │   └── groundnext/       # GroundNext-specific scripts
-│   └── data/                  # RL training data
+│   ├── data/                  # RL training data
+│   └── checkpoints/           # RL model checkpoints
 └── verl/                       # verl framework
 ```
 

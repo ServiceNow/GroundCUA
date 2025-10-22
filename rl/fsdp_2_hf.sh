@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE_DIR="/home/GroundCUA/groundnext-rl/checkpoints/groundnext"
+BASE_DIR="/home/GroundCUA/rl/checkpoints/groundnext"
 SCRIPT="/home/envs/grpo-gui/bin/python3.11 model_merger.py"
 
 STEPS=(2000)

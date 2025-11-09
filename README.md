@@ -100,6 +100,26 @@ Building reliable computer-use agents requires **grounding**: accurately connect
 
 *Performance numbers demonstrate strong cross-domain generalization despite training only on desktop data.*
 
+### Agentic Performance on OSWorld
+
+GroundNext models also demonstrate strong agentic capabilities when integrated with reasoning models. When combined with OpenAI o3, **GroundNext-3B** achieves competitive performance on OSWorld, matching or exceeding much larger models.
+
+<div align="center">
+
+| **Model** | **OS** | **Office** | **Daily** | **Pro** | **Workflow** | **Overall** |
+|------------|:------:|:----------:|:----------:|:--------:|:-------------:|:------------:|
+| OpenAI o3 | 62.5 | 14.5 | 21.4 | 38.8 | 16.5 | 23.0 |
+| CUA | 23.9 | 34.6 | 55.1 | 18.3 | 18.3 | 31.4 |
+| OpenCUA-7B | 41.7 | 22.5 | 35.4 | 46.3 | 9.8 | 26.5 |
+| OpenCUA-72B | 58.3 | 47.0 | 53.8 | 73.5 | 20.4 | 46.1 |
+| UI-TARS-1.5-7B | 33.3 | 29.9 | 37.9 | 53.1 | 9.1 | 29.6 |
+| JEDI-7B w/ o3 | *50.0* | 46.1 | **61.9** | **75.5** | *35.3* | **51.0** |
+| **GroundNext-3B w/ o3 (ours)** | **62.5** | **47.0** | *55.0* | *73.5* | **36.5** | *50.6* |
+
+</div>
+
+*Task categories: OS (operating system tasks), Office (productivity applications), Daily (common user tasks), Pro (professional software), Workflow (multi-step workflows).*
+
 ### Key Results
 
 - **Data Efficiency**: Achieves SOTA with only 700K training examples vs 9M+ in prior work
@@ -416,5 +436,4 @@ If you use GroundCUA in your research, please cite our work:
   journal={arXiv preprint arXiv:2501.XXXXX},
   year={2025}
 }
-```
 

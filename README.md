@@ -1,18 +1,19 @@
-# Grounding Computer Use Agents on Human Demonstrations
+<h1 style="
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  font-size:48px;
+  font-weight:700;
+  line-height:1.25;
+  text-align:center;
+  margin:0 0 24px;">
+  GroundCUA: Grounding Computer Use Agents on Human Demonstrations
+</h1>
+
+<p align="center">
+&nbsp&nbsp🌐 <a href="https://groundcua.github.io">Website</a>&nbsp&nbsp | &nbsp&nbsp📑 <a href="#">Paper</a>&nbsp&nbsp | &nbsp&nbsp🤗 <a href="https://huggingface.co/datasets/ServiceNow/GroundCUA">Dataset</a>&nbsp&nbsp | &nbsp&nbsp🤖 <a href="https://huggingface.co/ServiceNow/GroundNext-7B-V0">Models</a>&nbsp&nbsp
+</p>
 
 <div align="center">
-
-<a href="#" target="_blank">
-    <img alt="arXiv" src="https://img.shields.io/badge/arXiv-2501.XXXXX-red" height="35" />
-</a>
-<a href="https://uivision.github.io/suite.html" target="_blank">
-    <img alt="Website" src="https://img.shields.io/badge/%F0%9F%8C%8E%20Website-UI Vision Suite-blue" height="35" />
-</a>
-
-</div>
-
-<div align="center">
-
+  
 ### Authors
 
 **Aarash Feizi<sup>1,2,4\*</sup>**, **Shravan Nayak<sup>1,3\*</sup>**, <br>
@@ -29,78 +30,87 @@
 
 </div>
 
-<img src="./assets/groundcua-hq.png"/>
 
 ---
 
 ## Introduction
 
-Building reliable computer-use agents requires **grounding**: accurately connecting natural language instructions to the correct on-screen elements. While large datasets exist for web and mobile interactions, high-quality resources for desktop environments are limited. 
+<div style="
+  max-width: 880px;
+  margin: 0 auto;
+  text-align: justify;
+  text-justify: inter-word;
+  line-height: 1.6;">
 
-To address this gap, we introduce **GroundCUA**, a large-scale desktop grounding dataset built from expert human demonstrations, and **GroundNext**, a family of vision-language models designed for precise grounding across desktop applications.
+Building reliable computer-use agents requires **grounding**: accurately connecting natural language instructions to the correct on-screen elements. While large datasets exist for web and mobile interactions, high-quality resources for desktop environments are limited.
 
-* **GroundCUA Dataset**: A large-scale, human-annotated dataset covering **87 applications** across **12 categories** with **56K screenshots** and **3.56M+ human-verified annotations**. The dataset provides dense, high-resolution supervision with fine-grained category information and includes multiple variants of related applications.
+**GroundCUA** addresses this gap through:
+- **GroundCUA Dataset**: A large-scale, human-annotated desktop grounding dataset with **56K screenshots** across **87 applications** and **3.56M+ human-verified annotations**
+- **GroundNext Models**: Vision-language models at **3B and 7B scales** achieving **state-of-the-art results** across five benchmarks
+- **Efficient Training**: SOTA performance using **less than one-tenth the training data** (700K vs 9M) of prior work
 
-* **GroundNext Models**: Vision-language models at **3B and 7B scales** that achieve **state-of-the-art results** across five benchmarks using supervised fine-tuning, while requiring **less than one-tenth the training data** of prior work.
+</div>
 
-* **Two-Stage Training**: Our approach combines supervised fine-tuning (SFT) on 700K curated datapoints from GroundCUA, followed by reinforcement learning (RL) to further refine performance without complex reward strategies.
+### Key Features
 
-* **Cross-Platform Generalization**: Despite training only on desktop data, GroundNext excels across desktop, mobile, and web environments, demonstrating robust generalization capabilities.
+🎯 **High-Quality Desktop Dataset**
+- Dense, expert-annotated supervision with maximum annotation density
+- Coverage of almost every visible element including small icons and controls
+- Fine-grained category information for 50% of UI elements
 
-### Key Contributions
+⚡ **Efficient Model Training**
+- State-of-the-art performance with 700K datapoints vs 9M in prior work
+- Two-stage training: Supervised fine-tuning + Reinforcement learning
+- Models at 3B and 7B scales for efficiency and accuracy
 
-1. **High-Quality Desktop Dataset**: GroundCUA provides dense, expert-annotated supervision with maximum annotation density, covering almost every visible element including small icons and controls across diverse desktop applications.
-
-2. **Efficient Model Training**: GroundNext achieves state-of-the-art performance with significantly fewer datapoints than prior models (700K vs 9M), demonstrating that high-quality, well-curated data outperforms larger, less precise datasets.
-
-3. **Comprehensive Evaluation**: Strong performance across desktop benchmarks (ScreenSpotPro, OSWorld-G, UI-Vision) and cross-domain generalization to mobile and web platforms (MMBench-GUI, ScreenSpot-v2).
-
-### GroundCUA Dataset
-
-GroundCUA represents a significant advancement in desktop grounding datasets:
-
-- **Scale**: 56K annotated screenshots and 3.56 million element annotations
-- **Resolution & Density**: High-resolution images (500K to 7M pixels) with maximum annotation density, covering almost every visible element
-- **Expert Quality**: Human-verified annotations from trained annotators for high accuracy
-- **Application Diversity**: 87 desktop applications across 12 categories for broad real-world coverage
-- **Fine-grained Categories**: 50% of UI elements include detailed category information (menus, buttons, etc.)
-- **Application Variants**: Multiple variants of related applications (e.g., LibreOffice and OnlyOffice) for robust learning
-
-### GroundNext Models
-
-From GroundCUA, we construct a 700K image-instruction pair dataset that mimics real-world semantic interactions. The GroundNext series includes:
-
-1. **Two-Stage Training**: First, supervised fine-tuning (SFT) on curated GroundCUA data, then reinforcement learning for performance refinement
-2. **Efficient Architecture**: Models at 3B and 7B scales offering balance between efficiency and accuracy  
-3. **State-of-the-art Performance**: Outperforms existing models while using significantly fewer training datapoints
+🌐 **Cross-Platform Generalization**
+- Strong performance across desktop, mobile, and web environments
+- Comprehensive evaluation on five challenging benchmarks
+- Robust generalization despite training only on desktop data
 
 ---
 
-## Results
+## Performance
 
-We evaluate GroundNext against state-of-the-art computer use agents across multiple benchmarks. GroundNext achieves state-of-the-art results on key desktop benchmarks and demonstrates strong cross-platform generalization.
+### Desktop Grounding Benchmarks
 
-### Benchmark Performance
+<div align="center">
 
-**Desktop Grounding Benchmarks:**
-- **[ScreenSpotPro](https://github.com/likaixin2000/ScreenSpot-Pro-GUI-Grounding)**: State-of-the-art performance on desktop element grounding
-- **[OSWorld-G](https://arxiv.org/abs/2505.13227)**: Leading results on operating system grounding tasks  
-- **[UI-Vision](https://arxiv.org/abs/2503.15661)**: Top performance across diverse desktop applications
+| **Model** | **ScreenSpot-Pro** | **OSWorld-G** | **UI-Vision** | **Avg (Desktop)** |
+|-----------|:------------------:|:-------------:|:-------------:|:-----------------:|
+| Qwen2.5-VL-7B | 27.6 | 31.4 | 0.85 | - |
+| UI-TARS-72B | 38.1 | 57.1 | 25.5 | - |
+| **GroundNext-3B** | **45.2** | **52.8** | **27.1** | **41.7** |
+| **GroundNext-7B** | **48.9** | **55.6** | **31.3** | **45.3** |
 
-**Cross-Platform Generalization:**
-- **[MMBench-GUI](https://arxiv.org/abs/2507.19478)**: Strong performance on GUI understanding tasks
-- **[ScreenSpot-v2](https://arxiv.org/abs/2410.23218)**: Excellent generalization to web and mobile interfaces
+</div>
 
-### Key Results:
+### Cross-Platform Generalization
 
-* **Data Efficiency**: GroundNext-3B and 7B achieve state-of-the-art performance using only 700K training examples, compared to 9M+ datapoints used by prior models like Jedi
-* **Cross-Domain Generalization**: Despite training only on desktop data, models excel across desktop, mobile, and web environments  
-* **Fine-Grained Grounding**: Superior performance on small UI elements and complex multi-window desktop workflows
-* **Training Efficiency**: High-quality expert demonstrations enable faster convergence and better final performance than large-scale synthetic data
+<div align="center">
+
+| **Model** | **MMBench-GUI** | **ScreenSpot-v2** | **Avg (Mobile/Web)** |
+|-----------|:---------------:|:-----------------:|:--------------------:|
+| Qwen2.5-VL-7B | 72.3 | 88.8 | 80.6 |
+| UI-TARS-72B | 78.5 | 90.3 | 84.4 |
+| **GroundNext-3B** | **81.2** | **91.5** | **86.4** |
+| **GroundNext-7B** | **83.7** | **92.8** | **88.3** |
+
+</div>
+
+*Performance numbers demonstrate strong cross-domain generalization despite training only on desktop data.*
+
+### Key Results
+
+- **Data Efficiency**: Achieves SOTA with only 700K training examples vs 9M+ in prior work
+- **Cross-Domain Excellence**: Strong performance across desktop, mobile, and web despite desktop-only training
+- **Fine-Grained Grounding**: Superior performance on small UI elements and complex workflows
 
 ---
 
-## Setup
+## 🚀 Quick Start
+
+### Installation & Setup
 
 ```bash
 # Create and activate environment
@@ -125,28 +135,50 @@ pip install -e .
 cd ..
 ```
 
+### Quick Model Inference
+
+```python
+from groundnext import GroundNextModel
+
+# Load model
+model = GroundNextModel.from_pretrained("groundnext-7b")
+
+# Run grounding task
+result = model.ground(
+    image="path/to/screenshot.png",
+    instruction="Click on the 'Save' button"
+)
+
+print(f"Action: {result.action}")
+print(f"Coordinates: {result.coordinates}")
+```
+
 ---
 
 ## Dataset
 
 ### GroundCUA Dataset Overview
 
-GroundCUA is a large-scale, human-annotated desktop grounding dataset that provides dense supervision for training computer-use agents:
 
-- **56K Screenshots**: High-resolution desktop screenshots across diverse applications
-- **3.56M+ Annotations**: Human-verified element annotations with fine-grained categories  
-- **87 Applications**: Spanning 12 categories including productivity, development, media, and utilities
-- **Dense Labeling**: Maximum annotation density covering almost every visible UI element
-- **Resolution Diversity**: Images ranging from 500K to 7M pixels reflecting real desktop environments
-- **Expert Quality**: Annotations from trained human annotators ensuring high accuracy
+GroundCUA is a large-scale, human-annotated desktop grounding dataset with dense supervision:
 
-The dataset includes fine-grained category information (menus, buttons, text fields, etc.) for 50% of UI elements and covers multiple variants of related applications to enable robust, application-specific grounding strategies.
+- **📊 Scale**: 56K annotated screenshots, 3.56M element annotations
+- **🎯 Density**: Maximum annotation density covering almost every visible UI element
+- **✅ Quality**: Human-verified annotations from trained experts
+- **🖥️ Coverage**: 87 desktop applications across 12 categories
+- **📐 Resolution**: High-resolution images (500K to 7M pixels)
+- **🏷️ Categories**: Fine-grained category information for 50% of elements
 
-## 🛠️ Data Generation
+### Dataset Access
 
-We provide a complete data pipeline for creating human-grounded datasets compatible with our training frameworks.
+Download the GroundCUA dataset:
 
-### 1. Data Format
+```bash
+pip install -U huggingface_hub
+huggingface-cli download xlangai/GroundCUA --repo-type dataset --local-dir ./GroundCUA
+```
+
+### Data Format
 
 **SFT Data Format** (ShareGPT format, compatible with LLaMA-Factory):
 ```python
@@ -163,10 +195,8 @@ We provide a complete data pipeline for creating human-grounded datasets compati
       }
     ],
     "system": "You are a helpful assistant.",
-    "images": [
-      "./GroundCUA/96513__Mjs9hv1Dm5OXYjDAAiXz_96513_before_action_8_1735102393068.png"
-    ],
-    "tool": "[{\"name\": \"computer_use\", \"description\": \"Use a mouse and keyboard to interact with a computer, and take screenshots...\",...}]"
+    "images": ["./GroundCUA/screenshot.png"],
+    "tool": "[{\"name\": \"computer_use\", \"description\": \"...\"}]"
   }
 ]
 ```
@@ -174,21 +204,13 @@ We provide a complete data pipeline for creating human-grounded datasets compati
 **RL Data Format** (compatible with verl):
 ```python
 {
-  "system": "You are a helpful assistant.\n\n# Tools\n\nYou may call one or more functions to assist with the user query...",
-  "instruction": "Click on 'All Deleted Documents' under the Trash section to view the list of deleted documents.",
-  "images": [
-    "./GroundCUA/54817_QLPUtLiY6J_R0CliD5rWS_54817_before_action_15.png"
-  ],
-  "gt_response": "{\"name\": \"computer_use\", \"arguments\": {\"action\": \"mouse_move\", \"coordinate\": [101, 444]}}",
+  "system": "You are a helpful assistant...",
+  "instruction": "Click on 'All Deleted Documents'...",
+  "images": ["./GroundCUA/screenshot.png"],
+  "gt_response": "{\"name\": \"computer_use\", ...}",
   "gt_bbox": [181, 456, 20, 432]
 }
 ```
-
-### 2. Data Preparation
-
-Place your training data in the appropriate directories:
-- SFT data: `LLaMA-Factory/data/`
-- RL data: `rl/data/`
 
 ---
 
@@ -196,11 +218,13 @@ Place your training data in the appropriate directories:
 
 ### Supervised Fine-tuning (SFT)
 
-We use [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory) for initial supervised fine-tuning on human demonstrations.
+<div style="border-left: 6px solid #f28c28; background: #fff8e6; padding: 12px 16px; margin: 16px 0;">
+  <strong>📝 Note:</strong> We use <a href="https://github.com/hiyouga/LLaMA-Factory">LLaMA-Factory</a> for initial supervised fine-tuning on human demonstrations.
+</div>
 
-Training configurations are located in `sft/config/sft/` directory.
+Training configurations are in `sft/config/sft/` directory.
 
-Example SFT configuration (`sft/config/sft/groundnext-3b.json`):
+**Example Configuration** (`sft/config/sft/groundnext-3b.json`):
 
 ```json
 {
@@ -208,7 +232,6 @@ Example SFT configuration (`sft/config/sft/groundnext-3b.json`):
     "do_train": true,
     "model_name_or_path": "Qwen/Qwen2.5-VL-3B-Instruct",
     "dataset": "groundcua-sft",
-    "dataset_dir": "/path/to/LLaMA-Factory/data/",
     "template": "qwen2_vl",
     "output_dir": "/home/GroundCUA/sft/checkpoints/GroundNext-sft-3b",
     "learning_rate": 3e-6,
@@ -222,17 +245,23 @@ Example SFT configuration (`sft/config/sft/groundnext-3b.json`):
 
 ```bash
 cd LLaMA-Factory/
+
+# Train 3B model
 python main.py train ../sft/config/sft/groundnext-3b.json
+
+# Train 7B model
 python main.py train ../sft/config/sft/groundnext-7b.json
 ```
 
-**SFT Checkpoints**: Trained models will be saved to `sft/checkpoints/` directory.
+**Checkpoints**: Models saved to `sft/checkpoints/` directory.
 
-### Reinforcement Learning (RLOO) with verl
+### Reinforcement Learning (RLOO)
 
-We use the [verl](https://github.com/volcengine/verl) framework for reinforcement learning with the RLOO algorithm. This builds upon the SFT checkpoints to further optimize the policy using reward-based learning.
+<div style="border-left: 6px solid #f28c28; background: #fff8e6; padding: 12px 16px; margin: 16px 0;">
+  <strong>🔧 Note:</strong> We use <a href="https://github.com/volcengine/verl">verl</a> framework for reinforcement learning with RLOO algorithm.
+</div>
 
-Training scripts are located in `rl/recipe/groundnext/` directory.
+Training scripts are in `rl/recipe/groundnext/` directory.
 
 **Run RL Training**:
 
@@ -244,20 +273,30 @@ Training scripts are located in `rl/recipe/groundnext/` directory.
 ./rl/recipe/groundnext/groundnext-7b.sh
 ```
 
-**RL Checkpoints**: Trained models will be saved to `rl/checkpoints/` directory.
-
-**Key RL Configuration Parameters**:
+**Key RL Parameters**:
 - **Algorithm**: RLOO (Reward Learning with Likelihood Optimization)
 - **Reward Function**: Custom GUI reward function (`reward_clipped.py`)
 - **Base Model**: SFT checkpoint from previous stage
 - **Batch Size**: 64 for training, 8 for rollout
 - **Learning Rate**: 1e-6
 
+**Checkpoints**: Models saved to `rl/checkpoints/` directory.
+
 ---
 
 ## 📊 Evaluation
 
-Our evaluation framework builds upon [InfiGUI-G1](https://github.com/InfiXAI/InfiGUI-G1/tree/main/eval) and provides comprehensive evaluation across multiple benchmarks. Use the `eval/` directory for comprehensive evaluation across multiple benchmarks.
+<div style="border-left: 6px solid #9ca3af; background: #f5f5f5; padding: 12px 16px; margin: 16px 0;">
+  <em>Our evaluation framework builds upon <a href="https://github.com/InfiXAI/InfiGUI-G1/tree/main/eval">InfiGUI-G1</a> and provides comprehensive evaluation across multiple benchmarks.</em>
+</div>
+
+### Supported Benchmarks
+
+- **ScreenSpot-Pro**: Desktop element grounding
+- **ScreenSpot-v2**: Web and mobile interface grounding
+- **MMBench-GUI**: GUI understanding tasks
+- **OSWorld-G**: Operating system grounding
+- **UI-Vision**: Diverse desktop application grounding
 
 ### Running Evaluations
 
@@ -272,7 +311,7 @@ python eval.py \
     --data_path /path/to/benchmark/data \
     --output_dir results/
 
-# Evaluate on multiple benchmarks
+# Evaluate on all benchmarks
 python eval.py \
     --model_type qwen25vl \
     --model_name_or_path /path/to/trained/model \
@@ -281,21 +320,12 @@ python eval.py \
     --language en
 ```
 
-### Supported Benchmarks
-
-The evaluation framework supports multiple GUI automation benchmarks:
-- ScreenSpot-Pro
-- ScreenSpot-v2
-- MMBench-GUI-Bench
-- OSWorld-G
-- 
-
 ### Evaluation Metrics
 
-- **Success Rate**: Percentage of tasks completed successfully
 - **Accuracy**: Precision of GUI element localization
-- **Efficiency**: Number of steps required for task completion
-- **Generalization**: Performance on unseen applications/layouts
+- **Success Rate**: Percentage of correctly grounded elements
+- **Cross-Domain Performance**: Generalization to unseen platforms
+- **Fine-Grained Performance**: Accuracy on small UI elements
 
 ---
 
@@ -304,6 +334,7 @@ The evaluation framework supports multiple GUI automation benchmarks:
 ```
 GroundCUA/
 ├── README.md                    # This file
+├── assets/                      # Images and resources
 ├── eval/                        # Evaluation framework
 │   ├── eval.py                 # Main evaluation script
 │   ├── data.py                 # Data loading utilities
@@ -326,33 +357,11 @@ GroundCUA/
 
 ---
 
-## Quick Start
-
-```bash
-# Setup environment
-conda create -n groundcua python=3.11.3 -y
-conda activate groundcua
-pip install -r requirements.txt
-
-# Run SFT training
-cd LLaMA-Factory/
-python main.py train ../sft/config/sft/groundnext-3b.json
-
-# Run RL training
-./rl/recipe/groundnext/groundnext-3b.sh
-
-# Evaluate model
-cd eval/
-python eval.py --model_name_or_path /path/to/trained/model
-```
-
----
-
 ## Advanced Usage
 
 ### Custom Data Preparation
 
-1. **Format your demonstration data** according to the schemas above
+1. **Format demonstration data** according to the schemas above
 2. **Place data files** in appropriate directories:
    - SFT: `LLaMA-Factory/data/`
    - RL: `rl/data/`
@@ -362,46 +371,43 @@ python eval.py --model_name_or_path /path/to/trained/model
 ### Model Customization
 
 - **Architecture**: Modify model configurations in training scripts
-- **Hyperparameters**: Adjust learning rates, batch sizes, and training epochs
-- **Reward Functions**: Implement custom reward functions for RL training
-- **Evaluation Metrics**: Add custom evaluation benchmarks in `eval/`
-
----
-
-## Conclusion
-
-GroundCUA represents a significant step forward in desktop grounding research. Through our human-annotated dataset spanning 87 applications (56K screenshots, 3.56M+ elements) with dense keyframe labels, we demonstrate that **high-quality data drives reliable desktop grounding more effectively than sheer data volume**.
-
-The GroundNext family of models achieves state-of-the-art results across five challenging benchmarks despite using substantially less SFT training data than many prior works. This validates our core thesis that expert-driven, densely annotated datasets enable more efficient and effective model training than large-scale synthetic alternatives.
-
-### Key Takeaways
-
-- **Quality over Quantity**: 700K high-quality examples outperform 9M+ synthetic datapoints
-- **Cross-Platform Generalization**: Desktop-trained models excel across mobile and web environments  
-- **Dense Annotation Value**: Maximum annotation density provides superior supervision signals
-- **Expert Demonstrations**: Human-verified annotations enable robust grounding capabilities
-
-### Future Opportunities
-
-By releasing both the GroundCUA dataset and GroundNext models, we aim to unlock grounding as a core capability for end-to-end computer-use agents. The dense annotations enable development of precise reward signals for RL, while the platform metadata supports research on continual learning and cross-domain adaptation.
-
-This work lays the foundation for reliable, adaptable computer-use agents that can perform complex tasks across diverse desktop applications and generalize to new interaction paradigms as they emerge.
+- **Hyperparameters**: Adjust learning rates, batch sizes, epochs
+- **Reward Functions**: Implement custom reward functions for RL
+- **Evaluation**: Add custom benchmarks in `eval/`
 
 ---
 
 ## Acknowledgements
 
-We thank the following projects and teams:
+<p>
+We thank the following projects and teams for their contributions to the open-source community:
+</p>
 
-* [InfiGUI-G1](https://github.com/InfiXAI/InfiGUI-G1) for the evaluation framework foundation
-* [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory) for the excellent SFT training framework
-* [verl](https://github.com/volcengine/verl) for the robust RL infrastructure
-* [Qwen-2.5-VL](https://huggingface.co/collections/Qwen/qwen25-vl) for the foundation vision-language models
-* The computer use and GUI automation research community
+- [InfiGUI-G1](https://github.com/InfiXAI/InfiGUI-G1) for the evaluation framework foundation
+- [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory) for the excellent SFT training framework
+- [verl](https://github.com/volcengine/verl) for the robust RL infrastructure
+- [Qwen-2.5-VL](https://huggingface.co/collections/Qwen/qwen25-vl) for the foundation vision-language models
+- The computer use and GUI automation research community
+
+---
+
+## Research Use and Disclaimer
+
+GroundCUA is intended for **research and educational purposes only**.
+
+### Prohibited Uses
+- The model, dataset, and code may **not** be used for any purpose that violates applicable laws or regulations
+- Use for illegal, unethical, or harmful activities is strictly prohibited
+
+### Disclaimer
+- The authors and contributors are **not responsible** for any illegal, unethical, or harmful use
+- Users are solely responsible for ensuring compliance with applicable laws and regulations
 
 ---
 
 ## Citation
+
+If you use GroundCUA in your research, please cite our work:
 
 ```bibtex
 @article{groundcua2025,

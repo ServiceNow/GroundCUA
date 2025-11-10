@@ -31,6 +31,10 @@
 </p>
 
 <div align="center">
+  <img src="./assets/groundcua-hq.png" width="700" alt="GroundCUA Overview">
+</div>
+
+<div align="center">
   
 ### Authors
 

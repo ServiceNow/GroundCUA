@@ -21,57 +21,6 @@ from data import (
 )
 from prompts import get_prompt_processor, PROMPT_PROCESSORS
 
-def prepare_sample_data_phiground(sample: Dict, benchmark_info: Dict, max_image_pixels: int, prompt_processor, think_mode: bool, num_crops=7) -> tuple:
-    
-    image_path = os.path.join(benchmark_info["image_root"], sample["images"])
-    if not os.path.exists(image_path):
-        raise FileNotFoundError(f"Image not found: {image_path}")
-    
-    image = Image.open(image_path)
-    original_width, original_height = image.size
-    
-    # Process bounding box coordinates
-    bbox = sample["bbox"].copy()
-    
-
-    if num_crops == 16:
-        target_width, target_height = 336 * 5, 336 *3
-    elif num_crops == 7:
-        target_width, target_height = 336 * 3, 336 *2
-    elif num_crops == 28:
-        target_width, target_height = 336 * 7, 336 *4
-    else:
-        raise NotImplementedError
-
-    img_ratio = original_width / original_height
-    target_ratio = target_width / target_height
-   
-    if img_ratio > target_ratio:  
-        new_width = target_width  
-        new_height = int(new_width / img_ratio)
-    else:  
-        new_height = target_height
-        new_width = int(new_height * img_ratio)  
-        
-    reshape_ratio = new_width / original_width
-    
-    if all(key in bbox.keys() for key in ["x1", "y1", "x2", "y2"]):
-        bbox["x1"] = bbox["x1"] * reshape_ratio
-        bbox["y1"] = bbox["y1"] * reshape_ratio
-        bbox["x2"] = bbox["x2"] * reshape_ratio
-        bbox["y2"] = bbox["y2"] * reshape_ratio
-    elif all(key in bbox.keys() for key in ["polygon"]):
-        bbox["polygon"] = [[p[0] * reshape_ratio, p[1] * reshape_ratio] for p in bbox["polygon"]]
-
-    image = image.resize((new_width, new_height), Image.LANCZOS)  
-    new_img = Image.new("RGB", (target_width, target_height), (255, 255, 255))  
-    paste_position = (0, 0)  
-    new_img.paste(image, paste_position)
-    
-    messages = prompt_processor.generate_prompt(sample, new_width, new_height, think_mode)
-
-    return new_img, messages, bbox
-
 
 def prepare_sample_data(sample: Dict, benchmark_info: Dict, max_image_pixels: int, prompt_processor, think_mode: bool) -> tuple:
     """
@@ -146,7 +95,6 @@ def main():
     
     parser.add_argument("model_path", type=str, help="Path to the model")
     parser.add_argument("--benchmark", "-b", type=str, default="screenspot-pro", help="Name of the benchmark to evaluate")
-    # parser.add_argument("--prompt", type=str, default="infigui-g1", help="Name of the prompt processor to use")
     parser.add_argument("--prompt", type=str, default="star-cua", choices=list(PROMPT_PROCESSORS.keys()), help="Name of the prompt processor to use")
     parser.add_argument("--engine", type=str, default="vllm", choices=['vllm', 'hf'], help="Name of the engine to use")
     parser.add_argument("--tensor-parallel", "-tp", type=int, default=4, help="Tensor parallelism size")
@@ -157,7 +105,7 @@ def main():
     parser.add_argument("--max-image-tokens", "-mit", type=int, default=5600, help="Maximum image tokens")
     parser.add_argument("--think-mode", type=int, default=0, help="Whether to enable thinking mode (1=enable, 0=disable)")
     parser.add_argument("--debug-mode", type=int, default=0, help="Whether to enable debug mode (1=enable, 0=disable)")
-    parser.add_argument("--model-type", type=str, default='qwen2.5vl', choices=['qwen2.5vl', 'qwen2vl', 'guiactor', 'phiground'], help="Output model name, extracted from model path if not specified")
+    parser.add_argument("--model-type", type=str, default='qwen2.5vl', choices=['qwen2.5vl', 'qwen2vl'], help="Output model name, extracted from model path if not specified")
     parser.add_argument("--temperature", "-t", type=float, default=0.0, help="Generation temperature")
     
     args = parser.parse_args()
@@ -183,7 +131,6 @@ def main():
     if os.path.basename(args.model_path).startswith('checkpoint'):
         model_name = os.path.basename(os.path.dirname(args.model_path)) + '_chkp' + os.path.basename(args.model_path).split('-')[-1] 
     elif os.path.basename(args.model_path) == 'huggingface':
-        # e.g. /mnt/home/star-cua/star-cua/checkpoints/groundnext/vllm_7b_guiact20KLarge-5kError_from256bs5-0k_reward-01_bs64/global_step_100/actor/huggingface
         model_name = os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(args.model_path)))) + '_chkp' + os.path.basename(os.path.dirname(os.path.dirname(args.model_path))).split('_')[-1]
     else:
         model_name = os.path.basename(os.path.normpath(args.model_path))
@@ -224,22 +171,7 @@ def main():
             elif args.model_type.startswith('qwen2vl'):
                 print("Using Qwen2VL HF model")
                 pass
-    elif args.model_type in ['guiactor', 'gui-actor', 'gui_actor']:
-        print('Using GUI-Actor model')
-        from models.gui_actor import GUI_Actor
-        llm = GUI_Actor(
-            model_name_or_path=args.model_path)
-    elif args.model_type == 'phiground':
-        print('Using PhiGround model')
-        from models.phiground import PhiGround
-        llm = PhiGround(
-            model_path=args.model_path,
-            tensor_parallel_size=args.tensor_parallel,
-            max_model_len=max_image_pixels//28//28 + 1024,
-            max_num_seqs=args.max_num_seqs,
-            enforce_eager=True,
-        )
-    
+
     # Load dataset
     print("Loading dataset...")
     raw_dataset = load_dataset(benchmark_info)
@@ -281,15 +213,9 @@ def main():
             print(f"Loaded {len(messages_list)} samples from cache")
     else:
         for i, sample in enumerate(tqdm(dataset, desc="Preparing samples")):
-            # Prepare sample data
-            if args.model_type == 'phiground':
-                image, messages, bbox = prepare_sample_data_phiground(
-                    sample, benchmark_info, max_image_pixels, prompt_processor, think_mode, num_crops=7
-                )
-            else:
-                image, messages, bbox = prepare_sample_data(
-                    sample, benchmark_info, max_image_pixels, prompt_processor, think_mode
-                )
+            image, messages, bbox = prepare_sample_data(
+                sample, benchmark_info, max_image_pixels, prompt_processor, think_mode
+            )
             messages_list.append(messages)
             images.append(image)
             processed_bboxes.append(bbox)

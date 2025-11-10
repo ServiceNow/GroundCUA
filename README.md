@@ -1,12 +1,18 @@
-<h1 style="
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
-  font-size:48px;
-  font-weight:700;
-  line-height:1.25;
-  text-align:center;
-  margin:0 0 24px;">
-  GroundCUA: Grounding Computer Use Agents on Human Demonstrations
-</h1>
+<div align="center">
+  <h1 style="
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    font-size:48px;
+    font-weight:700;
+    line-height:1.25;
+    margin:0 0 24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;">
+    <img src="./assets/logo.png" alt="GroundCUA Logo" style="height:48px; width:auto; vertical-align:middle;" />
+    GroundCUA: Grounding Computer Use Agents on Human Demonstrations
+  </h1>
+</div>
 
 <p align="center">
 &nbsp&nbsp🌐 <a href="https://groundcua.github.io">Website</a>&nbsp&nbsp | &nbsp&nbsp📑 <a href="#">Paper</a>&nbsp&nbsp | &nbsp&nbsp🤗 <a href="https://huggingface.co/datasets/ServiceNow/GroundCUA">Dataset</a>&nbsp&nbsp | &nbsp&nbsp🤖 <a href="https://huggingface.co/ServiceNow/GroundNext-7B-V0">Models</a>&nbsp&nbsp

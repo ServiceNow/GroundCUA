@@ -134,24 +134,47 @@ GroundNext models also demonstrate strong agentic capabilities when integrated w
 
 ```bash
 # Create and activate environment
-conda create -n groundcua python=3.11.3 -y
+conda create -n groundcua python=3.10 -y
 conda activate groundcua
 
-# Clone repository with submodules
-git clone --recurse-submodules <repo_url>
+pip install --upgrade pip
+
+# Clone repository
+git clone https://github.com/ServiceNow/GroundCUA.git
 cd GroundCUA
 
-# Install dependencies
+# Install PyTorch (adjust for your CUDA version)
+pip install torch torchvision
+
+# Install core dependencies
 pip install -r requirements.txt
 
-# Install LLaMA-Factory for SFT training
+# Install Flash Attention (recommended for faster inference)
+pip install flash-attn --no-build-isolation
+```
+
+### Optional: Install Training Frameworks
+
+<div style="border-left: 6px solid #f28c28; background: #fff8e6; padding: 12px 16px; margin: 16px 0;">
+  <strong>📝 Note:</strong> Training frameworks are only needed if you plan to train models. For inference only, skip this section.
+</div>
+
+```bash
+# Initialize submodules if not already done
+git submodule update --init --recursive
+
+# Install LLaMA-Factory
 cd LLaMA-Factory/
-pip install --no-deps -e .
+pip install -e ".[torch,metrics]" --no-build-isolation
 cd ..
 
-# Install verl for RL training
+# Install verl
 cd verl/
 pip install -e .
+
+# Install the latest stable version of vLLM
+pip install vllm==0.8.3
+
 cd ..
 ```
 
@@ -174,34 +197,6 @@ You may call one or more functions to assist with the user query.
 
 You are provided with function signatures within <tools></tools> XML tags:
 <tools>
-{{"type": "function", "function": {{"name": "computer_use", "description": "Use a mouse and keyboard to interact with a computer, and take screenshots.\n* This is an interface to a desktop GUI. You do not have access to a terminal or applications menu. You must click on desktop icons to start applications.\n* Some applications may take time to start or process actions, so you may need to wait and take successive screenshots to see the results of your actions. E.g. if you click on Firefox and a window doesn't open, try wait and taking another screenshot.\n* The screen's resolution is {width}x{height}.\n* Whenever you intend to move the cursor to click on an element like an icon, you should consult a screenshot to determine the coordinates of the element before moving the cursor.\n* If you tried clicking on a program or link but it failed to load, even after waiting, try adjusting your cursor position so that the tip of the cursor visually falls on the element that you want to click.\n* Make sure to click any buttons, links, icons, etc with the cursor tip in the center of the element. Don't click boxes on their edges unless asked.", "parameters": {{"properties": {{"action": {{"description": "The action to perform. The available actions are:\n* `key`: Performs key down presses on the arguments passed in order, then performs key releases in reverse order.\n* `type`: Type a string of text on the keyboard.\n* `mouse_move`: Move the cursor to a specified (x, y) pixel coordinate on the screen.\n* `left_click`: Click the left mouse button.\n* `left_click_drag`: Click and drag the cursor to a specified (x, y) pixel coordinate on the screen.\n* `right_click`: Click the right mouse button.\n* `middle_click`: Click the middle mouse button.\n* `double_click`: Double-click the left mouse button.\n* `scroll`: Performs a scroll of the mouse scroll wheel.\n* `wait`: Wait specified seconds for the change to happen.\n* `terminate`: Terminate the current task and report its completion status.", "enum": ["key", "type", "mouse_move", "left_click", "left_click_drag", "right_click", "middle_click", "double_click", "scroll", "wait", "terminate"], "type": "string"}}, "keys": {{"description": "Required only by `action=key`.", "type": "array"}}, "text": {{"description": "Required only by `action=type`.", "type": "string"}}, "coordinate": {{"description": "(x, y): The x (pixels from the left edge) and y (pixels from the top edge) coordinates to move the mouse to. Required only by `action=mouse_move`, `action=left_click_drag`, `action=left_click`, `action=right_click`, `action=double_click`.", "type": "array"}}, "pixels": {{"description": "The amount of scrolling to perform. Positive values scroll up, negative values scroll down. Required only by `action=scroll`.", "type": "number"}}, "time": {{"description": "The seconds to wait. Required only by `action=wait`.", "type": "number"}}, "status": {{"description": "The status of the task. Required only by `action=terminate`.", "type": "string", "enum": ["success", "failure"]}}}}, "required": ["action"], "type": "object"}}}}}}
-</tools>
-
-For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
-<tool_call>
-{{"name": <function-name>, "arguments": <args-json-object>}}
-</tool_call>"""
-
-model_name = "ServiceNow/GroundNext-7B-V0"
-
-model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
-            model_name,       
-            torch_dtype=torch.bfloat16,
-            attn_implementation="flash_attention_2",
-            device_map="auto",
-            trust_remote_code=True
-        ).eval()
-
-processor = AutoProcessor.from_pretrained(model_name)
-tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-
-
-model.generation_config.temperature = TEMP
-model.generation_config.do_sample = False if TEMP == 0.0 else True
-model.generation_config.use_cache = True
-
-image_path = "./screenshot.png"
-instruction = "Click on the 'Save' icon"
 
 
 # inference

@@ -1,0 +1,6 @@
+[submodule "LLaMA-Factory"]
+	path = LLaMA-Factory
+	url = https://github.com/hiyouga/LLaMA-Factory.git
+[submodule "verl"]
+	path = verl
+	url = https://github.com/volcengine/verl.git

@@ -223,7 +223,7 @@ full_prompt = f'{instruction}'
 messages = [
     {
     "role": "system",
-    "content": SYSTEM_PROMPT.format(img_width=img_width, img_height=img_height)
+    "content": GroundNext_GROUNDER_SYS_PROMPT.format(img_width=img_width, img_height=img_height)
     },
     {
         "role": "user",
@@ -240,20 +240,20 @@ messages = [
 input_text = tokenizer.apply_chat_template(messages,
                                            add_generation_prompt=True,
                                            tokenize=False)
-inputs = self.processor(
+inputs = processor(
                 text=[input_text],
                 images=[image],
                 videos=None,
                 padding=True,
                 return_tensors="pt",
-            ).to(self.model.device)
+            ).to(model.device)
 
-output = model.generate(**inputs, max_new_tokens=64)
+generated_ids = model.generate(**inputs, max_new_tokens=64)
 
 generated_ids_trimmed = [
     out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
 ]
-response = self.processor.batch_decode(
+response = processor.batch_decode(
     generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
 )[0]
 

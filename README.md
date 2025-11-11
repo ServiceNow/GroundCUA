@@ -300,7 +300,7 @@ Download the GroundCUA dataset:
 
 ```bash
 pip install -U huggingface_hub
-huggingface-cli download xlangai/GroundCUA --repo-type dataset --local-dir ./GroundCUA
+huggingface-cli download ServiceNow/GroundCUA --repo-type dataset --local-dir ./GroundCUA
 ```
 
 ### Data Format

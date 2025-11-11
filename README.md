@@ -40,7 +40,7 @@
 
 **Aarash Feizi<sup>1,2,4\*</sup>**, **Shravan Nayak<sup>1,3\*</sup>**, <br>
 **Xiangru Jian<sup>5</sup>**, **Kevin Qinghong Lin<sup>6</sup>**, **Kaixin Li<sup>6</sup>**,
-**Rabiul Awal<sup>1,3,4</sup>**, **Xing Han Lü<sup>1,2</sup>**, **Johan Obando-Ceron<sup>1,3</sup>**, **Juan A. Rodriguez<sup>1,8</sup>**,
+**Rabiul Awal<sup>1,3,4</sup>**, **Xing Han Lù<sup>1,2</sup>**, **Johan Obando-Ceron<sup>1,3</sup>**, **Juan A. Rodriguez<sup>1,8</sup>**,
 **Nicolas Chapados<sup>4</sup>**, **David Vazquez<sup>4</sup>**, **Adriana Romero-Soriano<sup>1,2</sup>**, **Reihaneh Rabbany<sup>1,2</sup>**,<br>
 **Perouz Taslakian<sup>4</sup>**, **Christopher Pal<sup>4</sup>**, **Spandana Gella<sup>4</sup>**, **Sai Rajeswar<sup>4,1,3</sup>**
 

@@ -27,7 +27,7 @@
 
 
 <p align="center">
-&nbsp&nbsp🌐 <a href="https://groundcua.github.io">Website</a>&nbsp&nbsp | &nbsp&nbsp📑 <a href="#">Paper</a>&nbsp&nbsp | &nbsp&nbsp🤗 <a href="https://huggingface.co/datasets/ServiceNow/GroundCUA">Dataset</a>&nbsp&nbsp | &nbsp&nbsp🤖 <a href="https://huggingface.co/ServiceNow/GroundNext-7B-V0">Models</a>&nbsp&nbsp
+&nbsp&nbsp🌐 <a href="https://groundcua.github.io">Website</a>&nbsp&nbsp | &nbsp&nbsp📑 <a href="https://arxiv.org/abs/2511.07332">Paper</a>&nbsp&nbsp | &nbsp&nbsp🤗 <a href="https://huggingface.co/datasets/ServiceNow/GroundCUA">Dataset</a>&nbsp&nbsp | &nbsp&nbsp🤖 <a href="https://huggingface.co/ServiceNow/GroundNext-7B-V0">Models</a>&nbsp&nbsp
 </p>
 
 <div align="center">
@@ -535,10 +535,13 @@ GroundCUA is intended for **research and educational purposes only**.
 If you use GroundCUA in your research, please cite our work:
 
 ```bibtex
-@article{groundcua2025,
-  title={Grounding Computer Use Agents on Human Demonstrations},
-  author={Aarash Feizi and Shravan Nayak and Xiangru Jian and Kevin Qinghong Lin and Kaixin Li and Rabiul Awal and Xing Han Lü and Johan Obando-Ceron and Juan A. Rodriguez and Nicolas Chapados and David Vazquez and Adriana Romero-Soriano and Reihaneh Rabbany and Perouz Taslakian and Christopher Pal and Spandana Gella and Sai Rajeswar},
-  journal={arXiv preprint arXiv:2501.XXXXX},
-  year={2025}
+@misc{feizi2025groundingcomputeruseagents,
+      title={Grounding Computer Use Agents on Human Demonstrations}, 
+      author={Aarash Feizi and Shravan Nayak and Xiangru Jian and Kevin Qinghong Lin and Kaixin Li and Rabiul Awal and Xing Han Lù and Johan Obando-Ceron and Juan A. Rodriguez and Nicolas Chapados and David Vazquez and Adriana Romero-Soriano and Reihaneh Rabbany and Perouz Taslakian and Christopher Pal and Spandana Gella and Sai Rajeswar},
+      year={2025},
+      eprint={2511.07332},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2511.07332}, 
 }
 

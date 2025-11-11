@@ -31,7 +31,7 @@
 </p>
 
 <div align="center">
-  <img src="./assets/groundcua-hq.png" width="700" alt="GroundCUA Overview">
+  <img src="./assets/groundcua-hq.png" width="100%" alt="GroundCUA Overview">
 </div>
 
 <div align="center">

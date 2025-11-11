@@ -98,12 +98,12 @@ Building reliable computer-use agents requires **grounding**: accurately connect
 
 <div align="center">
 
-| **Model** | **ScreenSpot-Pro** | **OSWorld-G** | **UI-Vision** | **Avg (Desktop)** |
+| **Model** | **ScreenSpot-Pro** | **OSWorld-G** | **UI-Vision** | **Avg** |
 |-----------|:------------------:|:-------------:|:-------------:|:-----------------:|
-| Qwen2.5-VL-7B | 27.6 | 31.4 | 0.85 | - |
-| UI-TARS-72B | 38.1 | 57.1 | 25.5 | - |
-| **GroundNext-3B** | **45.2** | **52.8** | **27.1** | **41.7** |
-| **GroundNext-7B** | **48.9** | **55.6** | **31.3** | **45.3** |
+| Qwen2.5-VL-7B | 29.7 | 42.7 | 16.5 | 29.6 |
+| UI-TARS-72B | 38.1 | 57.1 | 25.5 | 40.2 |
+| **GroundNext-3B** | **49.8** | **64.2** | **62.1** | **58.7** |
+| **GroundNext-7B** | **52.9** | **67.7** | **60.3** | **60.3** |
 
 </div>
 
@@ -111,16 +111,16 @@ Building reliable computer-use agents requires **grounding**: accurately connect
 
 <div align="center">
 
-| **Model** | **MMBench-GUI** | **ScreenSpot-v2** | **Avg (Mobile/Web)** |
+| **Model** | **MMBench-GUI** | **ScreenSpot-v2** | **Avg** |
 |-----------|:---------------:|:-----------------:|:--------------------:|
-| Qwen2.5-VL-7B | 72.3 | 88.8 | 80.6 |
-| UI-TARS-72B | 78.5 | 90.3 | 84.4 |
-| **GroundNext-3B** | **81.2** | **91.5** | **86.4** |
-| **GroundNext-7B** | **83.7** | **92.8** | **88.3** |
+| Qwen2.5-VL-7B | 33.9 | 88.8 | 61.4 |
+| UI-TARS-72B | 74.3 | 90.3 | 82.3 |
+| **GroundNext-3B** | **77.1** | **88.5** | **82.8** |
+| **GroundNext-7B** | **81.1** | **90.4** | **85.8** |
 
 </div>
 
-*Performance numbers demonstrate strong cross-domain generalization despite training only on desktop data.*
+*Performance numbers demonstrate strong cross-domain (desktop, mobile and web) generalization despite training only on desktop data.*
 
 ### Agentic Performance on OSWorld
 

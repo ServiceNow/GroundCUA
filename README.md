@@ -178,82 +178,53 @@ pip install flash-attn --no-build-isolation
 
 
 
-### Quick Model Inference
+### Quick GroundNext Model Inference
 
 ```python
 import torch
-
 from transformers import Qwen2_5_VLForConditionalGeneration, AutoTokenizer, AutoProcessor
-from transformers.models.qwen2_vl.image_processing_qwen2_vl_fast import smart_resize
-
 from PIL import Image
+import groundcua_utils as groundcua
+import io
+from urllib.request import urlopen
 
-TEMP = 0.0
-GroundNext_GROUNDER_SYS_PROMPT = """You are a helpful assistant.
+model_name = "ServiceNow/GroundNext-7B-V0"
 
-# Tools
+# Load model and processor
+model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+    model_name,
+    torch_dtype=torch.bfloat16,
+    attn_implementation="flash_attention_2",
+    device_map="auto",
+    trust_remote_code=True
+).eval()
 
-You may call one or more functions to assist with the user query.
+processor = AutoProcessor.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
 
-You are provided with function signatures within <tools></tools> XML tags:
-<tools>
+# Configure generation
+model.generation_config.temperature = groundcua.DEFAULT_TEMPERATURE
+model.generation_config.do_sample = False
+model.generation_config.use_cache = True
 
+# Load and prepare image
+url = "https://huggingface.co/datasets/ServiceNow/GroundCUA/resolve/main/images/7-Zip/001f0079a489909eb94e47c2374b7bf36ab1842e314592ce30a34d18a54eb1df.png"
+image = Image.open(io.BytesIO(urlopen(url).read()))
+image, (width, height) = groundcua.prepare_image(image)
 
-# inference
-image = Image.open(image_path).convert('RGB')
-width, height = image.size
-resized_height, resized_width = smart_resize(
-    height,
-    width,
-    min_pixels=78_400,
-    max_pixels=6_000_000,
-)
+# Create messages and generate
+instruction = "Click on the 'File' button"
+messages = groundcua.create_messages(instruction, image, width, height)
 
-image = image.resize((resized_width, resized_height))
+input_text = tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
+inputs = processor(text=[input_text], images=[image], videos=None, padding=True, return_tensors="pt").to(model.device)
 
-img_width, img_height = resized_width, resized_height
+generated_ids = model.generate(**inputs, max_new_tokens=groundcua.DEFAULT_MAX_NEW_TOKENS)
+generated_ids_trimmed = [out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)]
 
-full_prompt = f'{instruction}'
-
-messages = [
-    {
-    "role": "system",
-    "content": GroundNext_GROUNDER_SYS_PROMPT.format(img_width=img_width, img_height=img_height)
-    },
-    {
-        "role": "user",
-        "content": [
-            {
-                "type": "image",
-                "image": image,
-            },
-            {"type": "text", "text": full_prompt},
-        ],
-    }
-]
-
-input_text = tokenizer.apply_chat_template(messages,
-                                           add_generation_prompt=True,
-                                           tokenize=False)
-inputs = processor(
-                text=[input_text],
-                images=[image],
-                videos=None,
-                padding=True,
-                return_tensors="pt",
-            ).to(model.device)
-
-generated_ids = model.generate(**inputs, max_new_tokens=64)
-
-generated_ids_trimmed = [
-    out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
-]
-response = processor.batch_decode(
-    generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
-)[0]
-
+response = processor.batch_decode(generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
 print(response)
-
+# Expected output: <tool_call>{"name": "computer_use", "arguments": {"action": "left_click", "coordinate": [x, y]}}</tool_call>
 ```
 
 ---
@@ -288,42 +259,6 @@ Download the GroundCUA dataset:
 pip install -U huggingface_hub
 huggingface-cli download ServiceNow/GroundCUA --repo-type dataset --local-dir ./GroundCUA
 ```
-
-### Data Format
-
-**SFT Data Format** (ShareGPT format, compatible with LLaMA-Factory):
-```python
-[
-  {
-    "conversations": [
-      {
-        "from": "human",
-        "value": "<image>Press `Close`."
-      },
-      {
-        "from": "function_call",
-        "value": "{\"name\": \"computer_use\", \"arguments\": {\"action\": \"mouse_move\", \"coordinate\": [999, 19]}}"
-      }
-    ],
-    "system": "You are a helpful assistant.",
-    "images": ["./GroundCUA/screenshot.png"],
-    "tool": "[{\"name\": \"computer_use\", \"description\": \"...\"}]"
-  }
-]
-```
-
-**RL Data Format** (compatible with verl):
-```python
-{
-  "system": "You are a helpful assistant...",
-  "instruction": "Click on 'All Deleted Documents'...",
-  "images": ["./GroundCUA/screenshot.png"],
-  "gt_response": "{\"name\": \"computer_use\", ...}",
-  "gt_bbox": [181, 456, 20, 432]
-}
-```
-
-
 
 ## 📊 Evaluation
 

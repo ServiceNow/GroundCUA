@@ -1,0 +1,24 @@
+[
+    {
+        "unique_id": "unique_id1",
+        "image_path": "/path/to/screenshot.png",
+        "bbox": [
+            1511.4798454096547,
+            136.616337148938,
+            1547.4798454096547,
+            162.63919429179512
+        ],
+        "instruction": "Begin by positioning your cursor on 'Save'."
+    },
+    {
+        "unique_id": "unique_id2",
+        "image_path": "/path/to/screenshot.png",
+        "bbox": [
+            349.1338348388672,
+            137.08929552350725,
+            370.7338348388672,
+            152.51786695207866
+        ],
+        "instruction": "Position your cursor above the given UI item: 'click'"
+    }
+]

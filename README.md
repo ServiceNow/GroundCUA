@@ -24,8 +24,6 @@
 </div>
 
 
-
-
 <p align="center">
 &nbsp&nbsp🌐 <a href="https://groundcua.github.io">Website</a>&nbsp&nbsp | &nbsp&nbsp📑 <a href="https://arxiv.org/abs/2511.07332">Paper</a>&nbsp&nbsp | &nbsp&nbsp🤗 <a href="https://huggingface.co/datasets/ServiceNow/GroundCUA">Dataset</a>&nbsp&nbsp | &nbsp&nbsp🤖 <a href="https://huggingface.co/ServiceNow/GroundNext-7B-V0">Models</a>&nbsp&nbsp
 </p>
@@ -55,6 +53,12 @@
 
 ---
 
+## Updates
+
+- **[Nov 11 2025]** 🎉 We released our [project webpage](https://groundcua.github.io), the [GroundCUA dataset](https://huggingface.co/datasets/ServiceNow/GroundCUA), and the [GroundNext-7B model](https://huggingface.co/ServiceNow/GroundNext-7B-V0)!
+
+
+
 ## Introduction
 
 <div style="
@@ -64,31 +68,28 @@
   text-justify: inter-word;
   line-height: 1.6;">
 
-Building reliable computer-use agents requires **grounding**: accurately connecting natural language instructions to the correct on-screen elements. While large datasets exist for web and mobile interactions, high-quality resources for desktop environments are limited.
-
-**GroundCUA** addresses this gap through:
-- **GroundCUA Dataset**: A large-scale, human-annotated desktop grounding dataset with **56K screenshots** across **87 applications** and **3.56M+ human-verified annotations**
+Building reliable computer-use agents requires **grounding**: accurately connecting natural language instructions to the correct on-screen elements. While large datasets exist for web and mobile interactions, high-quality resources for desktop environments are limited. We address this gap through:
+- **GroundCUA Dataset**: A large-scale, human-annotated desktop grounding dataset with **56K screenshots** from over 10,000 real-world human tasks across **87 applications** and **3.56M+ human-verified annotations**
 - **GroundNext Models**: Vision-language models at **3B and 7B scales** achieving **state-of-the-art results** across five benchmarks
-- **Efficient Training**: SOTA performance using **less than one-tenth the training data** (700K vs 9M) of prior work
+- **Efficient Training**: SOTA performance using **one-tenth the training data** of prior work
 
 </div>
 
 ### Key Features
 
 🎯 **High-Quality Desktop Dataset**
-- Dense, expert-annotated supervision with maximum annotation density
-- Coverage of almost every visible element including small icons and controls
-- Fine-grained category information for 50% of UI elements
+- Dense, expert-annotated screenshots with maximum annotation density
+- Coverage of almost every visible element, including small icons and controls
+- Fine-grained category information (menus, sidebars, etc.) for 50% of UI elements—**fully open-source!**
 
 ⚡ **Efficient Model Training**
-- State-of-the-art performance with 700K datapoints vs 9M in prior work
-- Two-stage training: Supervised fine-tuning + Reinforcement learning
+- State-of-the-art performance with 700K datapoints vs 9M+ in prior work
+- Two-stage training: supervised fine-tuning + reinforcement learning with fully open-source code
 - Models at 3B and 7B scales for efficiency and accuracy
 
 🌐 **Cross-Platform Generalization**
-- Strong performance across desktop, mobile, and web environments
 - Comprehensive evaluation on five challenging benchmarks
-- Robust generalization despite training only on desktop data
+- Robust generalization across desktop, mobile, and web environments despite training only on desktop data
 
 ---
 
@@ -175,30 +176,7 @@ pip install -r requirements.txt
 pip install flash-attn --no-build-isolation
 ```
 
-### Optional: Install Training Frameworks
 
-<div style="border-left: 6px solid #f28c28; background: #fff8e6; padding: 12px 16px; margin: 16px 0;">
-  <strong>📝 Note:</strong> Training frameworks are only needed if you plan to train models. For inference only, skip this section.
-</div>
-
-```bash
-# Initialize submodules if not already done
-git submodule update --init --recursive
-
-# Install LLaMA-Factory
-cd LLaMA-Factory/
-pip install -e ".[torch,metrics]" --no-build-isolation
-cd ..
-
-# Install verl
-cd verl/
-pip install -e .
-
-# Install the latest stable version of vLLM
-pip install vllm==0.8.3
-
-cd ..
-```
 
 ### Quick Model Inference
 
@@ -280,6 +258,14 @@ print(response)
 
 ---
 
+## 🎓 Training
+
+<div style="border-left: 6px solid #3b82f6; background: #eff6ff; padding: 12px 16px; margin: 16px 0;">
+  <strong>🚧 Coming Soon:</strong> We are currently refining the training documentation and code. Complete training instructions, including supervised fine-tuning and reinforcement learning recipes, will be released in the <code>training/</code> folder soon. Stay tuned!
+</div>
+
+---
+
 ## Dataset
 
 ### GroundCUA Dataset Overview
@@ -337,77 +323,7 @@ huggingface-cli download ServiceNow/GroundCUA --repo-type dataset --local-dir ./
 }
 ```
 
----
 
-## Training
-
-### Supervised Fine-tuning (SFT)
-
-<div style="border-left: 6px solid #f28c28; background: #fff8e6; padding: 12px 16px; margin: 16px 0;">
-  <strong>📝 Note:</strong> We use <a href="https://github.com/hiyouga/LLaMA-Factory">LLaMA-Factory</a> for initial supervised fine-tuning on human demonstrations.
-</div>
-
-Training configurations are in `sft/config/sft/` directory.
-
-**Example Configuration** (`sft/config/sft/groundnext-3b.json`):
-
-```json
-{
-    "stage": "sft",
-    "do_train": true,
-    "model_name_or_path": "Qwen/Qwen2.5-VL-3B-Instruct",
-    "dataset": "groundcua-sft",
-    "template": "qwen2_vl",
-    "output_dir": "/home/GroundCUA/sft/checkpoints/GroundNext-sft-3b",
-    "learning_rate": 3e-6,
-    "num_train_epochs": 1.0,
-    "bf16": true,
-    "flash_attn": "fa2"
-}
-```
-
-**Run SFT Training**:
-
-```bash
-cd LLaMA-Factory/
-
-# Train 3B model
-python main.py train ../sft/config/sft/groundnext-3b.json
-
-# Train 7B model
-python main.py train ../sft/config/sft/groundnext-7b.json
-```
-
-**Checkpoints**: Models saved to `sft/checkpoints/` directory.
-
-### Reinforcement Learning (RLOO)
-
-<div style="border-left: 6px solid #f28c28; background: #fff8e6; padding: 12px 16px; margin: 16px 0;">
-  <strong>🔧 Note:</strong> We use <a href="https://github.com/volcengine/verl">verl</a> framework for reinforcement learning with RLOO algorithm.
-</div>
-
-Training scripts are in `rl/recipe/groundnext/` directory.
-
-**Run RL Training**:
-
-```bash
-# For 3B model
-./rl/recipe/groundnext/groundnext-3b.sh
-
-# For 7B model  
-./rl/recipe/groundnext/groundnext-7b.sh
-```
-
-**Key RL Parameters**:
-- **Algorithm**: RLOO (Reward Learning with Likelihood Optimization)
-- **Reward Function**: Custom GUI reward function (`reward_clipped.py`)
-- **Base Model**: SFT checkpoint from previous stage
-- **Batch Size**: 64 for training, 8 for rollout
-- **Learning Rate**: 1e-6
-
-**Checkpoints**: Models saved to `rl/checkpoints/` directory.
-
----
 
 ## 📊 Evaluation
 
@@ -465,40 +381,8 @@ GroundCUA/
 │   ├── data.py                 # Data loading utilities
 │   ├── prompts.py              # Prompt processing
 │   └── models/                 # Model implementations
-├── sft/                        # Supervised Fine-tuning
-│   ├── config/                 # Training configurations
-│   │   ├── sft/               # SFT-specific configs
-│   │   └── deepspeed/         # DeepSpeed configurations
-│   └── checkpoints/           # SFT model checkpoints
-├── LLaMA-Factory/              # LLaMA-Factory framework
-│   └── data/                  # SFT training data
-├── rl/                         # Reinforcement Learning
-│   ├── recipe/                # Training recipes
-│   │   └── groundnext/       # GroundNext-specific scripts
-│   ├── data/                  # RL training data
-│   └── checkpoints/           # RL model checkpoints
-└── verl/                       # verl framework
+└── training/                   # Training pipeline (documentation coming soon)
 ```
-
----
-
-## Advanced Usage
-
-### Custom Data Preparation
-
-1. **Format demonstration data** according to the schemas above
-2. **Place data files** in appropriate directories:
-   - SFT: `LLaMA-Factory/data/`
-   - RL: `rl/data/`
-3. **Update dataset configurations** in config files
-4. **Run training** with custom configurations
-
-### Model Customization
-
-- **Architecture**: Modify model configurations in training scripts
-- **Hyperparameters**: Adjust learning rates, batch sizes, epochs
-- **Reward Functions**: Implement custom reward functions for RL
-- **Evaluation**: Add custom benchmarks in `eval/`
 
 ---
 

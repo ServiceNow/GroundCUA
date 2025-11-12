@@ -1,7 +1,13 @@
 #!/bin/bash
 
-BASE_DIR="/home/GroundCUA/rl/checkpoints/groundnext"
-SCRIPT="/home/envs/grpo-gui/bin/python3.11 model_merger.py"
+# ============================================
+# Configuration - Modify these paths as needed
+# ============================================
+PROJECT_ROOT="${PROJECT_ROOT:-/path/to/GroundCUA}"
+BASE_DIR="${PROJECT_ROOT}/rl/checkpoints/groundnext"
+
+# Python interpreter (use 'python3' if your conda environment is activated)
+PYTHON_CMD="${PYTHON_CMD:-python3}"
 
 STEPS=(2000)
 
@@ -28,7 +34,7 @@ for step in "${STEPS[@]}"; do
         fi
         
         echo "Running for: $ACTOR_DIR"
-        $SCRIPT --local_dir "$ACTOR_DIR"
+        ${PYTHON_CMD} model_merger.py --local_dir "$ACTOR_DIR"
         
     done
 done

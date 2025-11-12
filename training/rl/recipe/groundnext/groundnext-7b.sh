@@ -2,13 +2,25 @@
 set -x
 ulimit -n 65535
 
+# ============================================
+# Configuration - Modify these paths as needed
+# ============================================
+PROJECT_ROOT="${PROJECT_ROOT:-/path/to/GroundCUA}"
+TRAIN_DATA="${PROJECT_ROOT}/rl/data/GroundCUA/train_data.parquet"
+VAL_DATA="${PROJECT_ROOT}/rl/data/GroundCUA/val_data.parquet"
+REWARD_FUNCTION="${PROJECT_ROOT}/rl/recipe/groundnext/reward_clipped.py"
+SFT_CHECKPOINT="${PROJECT_ROOT}/sft/checkpoints/"
+
+# Python interpreter (use 'python3' if your conda environment is activated)
+PYTHON_CMD="${PYTHON_CMD:-python3}"
+
 # export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 # 
 
-/mnt/home/.conda/envs/verl-vllm/bin/python3.10 -m verl.trainer.main_ppo \
+${PYTHON_CMD} -m verl.trainer.main_ppo \
     algorithm.adv_estimator=rloo \
-    data.train_files=/home/GroundCUA/rl/data/GroundCUA/train_data.parquet \
-    data.val_files=/home/GroundCUA/rl/data/GroundCUA/val_data.parquet \
+    data.train_files=${TRAIN_DATA} \
+    data.val_files=${VAL_DATA} \
     data.train_batch_size=64 \
     data.dataloader_num_workers=8 \
     data.max_prompt_length=10000 \
@@ -16,9 +28,9 @@ ulimit -n 65535
     data.filter_overlong_prompts=False \
     data.truncation='error' \
     data.image_key=images \
-    custom_reward_function.path=/home/GroundCUA/rl/recipe/groundnext/reward_clipped.py \
+    custom_reward_function.path=${REWARD_FUNCTION} \
     custom_reward_function.name=gui_reward_function \
-    actor_rollout_ref.model.path=/home/GroundCUA/sft/checkpoints/ \
+    actor_rollout_ref.model.path=${SFT_CHECKPOINT} \
     actor_rollout_ref.model.enable_activation_offload=True \
     actor_rollout_ref.model.enable_gradient_checkpointing=True \
     actor_rollout_ref.model.use_remove_padding=True \
@@ -51,7 +63,7 @@ ulimit -n 65535
     algorithm.use_kl_in_reward=False \
     trainer.logger=['console','wandb'] \
     trainer.project_name='GroundCUA' \
-    trainer.experiment_name='GroundNext-rl-3b' \
+    trainer.experiment_name='GroundNext-rl-7b' \
     trainer.n_gpus_per_node=8 \
     trainer.nnodes=1 \
     trainer.save_freq=5 \

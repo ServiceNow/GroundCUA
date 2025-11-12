@@ -244,10 +244,8 @@ def json_to_parquet(json_path: str) -> str:
 
 
 paths = [
-        # './data/CUA-G/CUA-G_30K_under6M.json',
-        # './data/CUA-G/CUA-G_50K_under6M.json',
-        #  './data/CUA-G/CUA-G_100K_under6M.json',
-         './data/UI-Vision-Pro/grpo_200_test_correct_error.json']
+    'data/groundcua_train.json',
+]
 
 for path in paths:
     print(path)

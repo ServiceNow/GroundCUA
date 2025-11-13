@@ -94,18 +94,16 @@ To install from PyPI (recommended):
 # Create and activate environment
 python -m venv .venv
 source .venv/bin/activate
-# optional: update pip and install dependencies
-pip install --upgrade pip
+pip install --upgrade pip  # optional
 
 # Install PyTorch (adjust for CUDA version) and Flash Attention (for faster inference)
 pip install torch torchvision
 pip install flash-attn --no-build-isolation
 
-# Install GroundCUA package for utilities (prepare_image, create_messages, etc.)
-pip install groundcua
+# Install GroundCUA package for utilities
+pip install groundcua  # basic dependencies
+pip install groundcua[all] # full dependencies (optional)
 
-# optional: install all dependencies
-pip install groundcua[all]
 ```
 
 <details>

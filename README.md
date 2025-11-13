@@ -155,6 +155,27 @@ GroundNext models also demonstrate strong agentic capabilities when integrated w
 
 ### Installation & Setup
 
+#### Option 1: Install from PyPI (Recommended)
+
+```bash
+# Create and activate environment
+conda create -n groundcua python=3.10 -y
+conda activate groundcua
+
+pip install --upgrade pip
+
+# Install PyTorch (adjust for your CUDA version)
+pip install torch torchvision
+
+# Install GroundCUA package
+pip install groundcua
+
+# Install Flash Attention (recommended for faster inference)
+pip install flash-attn --no-build-isolation
+```
+
+#### Option 2: Install from Source
+
 ```bash
 # Create and activate environment
 conda create -n groundcua python=3.10 -y
@@ -169,8 +190,8 @@ cd GroundCUA
 # Install PyTorch (adjust for your CUDA version)
 pip install torch torchvision
 
-# Install core dependencies
-pip install -r requirements.txt
+# Install in development mode
+pip install -e .
 
 # Install Flash Attention (recommended for faster inference)
 pip install flash-attn --no-build-isolation
@@ -184,7 +205,7 @@ pip install flash-attn --no-build-isolation
 import torch
 from transformers import Qwen2_5_VLForConditionalGeneration, AutoTokenizer, AutoProcessor
 from PIL import Image
-import groundcua_utils as groundcua
+import groundcua
 import io
 from urllib.request import urlopen
 
@@ -310,7 +331,12 @@ python eval.py \
 ```
 GroundCUA/
 ├── README.md                    # This file
+├── pyproject.toml              # Package configuration
+├── PUBLISHING.md               # Guide for publishing to PyPI
 ├── assets/                      # Images and resources
+├── groundcua/                  # Main package (pip installable)
+│   ├── __init__.py             # Package initialization and utilities
+│   └── version.py              # Version information
 ├── eval/                        # Evaluation framework
 │   ├── eval.py                 # Main evaluation script
 │   ├── data.py                 # Data loading utilities

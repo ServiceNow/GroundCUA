@@ -3,6 +3,8 @@ GroundCUA Helper Module
 Contains constants and utility functions for GroundNext models.
 """
 
+from .version import __version__
+
 GROUNDNEXT_SYSTEM_PROMPT = """You are a helpful assistant.
 
 # Tools
@@ -74,3 +76,16 @@ def create_messages(instruction, image, width, height):
             ],
         }
     ]
+
+
+__all__ = [
+    "__version__",
+    "GROUNDNEXT_SYSTEM_PROMPT",
+    "DEFAULT_TEMPERATURE",
+    "DEFAULT_MAX_NEW_TOKENS",
+    "MIN_PIXELS",
+    "MAX_PIXELS",
+    "prepare_image",
+    "create_messages",
+]
+

@@ -51,14 +51,6 @@
 </div>
 
 
----
-
-## Updates
-
-- **[Nov 11 2025]** 🎉 We released our [project webpage](https://groundcua.github.io), the [GroundCUA dataset](https://huggingface.co/datasets/ServiceNow/GroundCUA), and the [GroundNext-7B model](https://huggingface.co/ServiceNow/GroundNext-7B-V0)!
-
-
-
 ## Introduction
 
 <div style="
@@ -91,7 +83,109 @@ Building reliable computer-use agents requires **grounding**: accurately connect
 - Comprehensive evaluation on five challenging benchmarks
 - Robust generalization across desktop, mobile, and web environments despite training only on desktop data
 
----
+
+## 🚀 Quick Start
+
+### Installation & Setup
+
+To install from PyPI (recommended):
+
+```bash
+# Create and activate environment
+python -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip  # optional
+
+# Install PyTorch (adjust for CUDA version) and Flash Attention (for faster inference)
+pip install torch torchvision
+pip install flash-attn --no-build-isolation
+
+# Install GroundCUA package for utilities
+pip install groundcua  # basic dependencies
+pip install groundcua[all] # full dependencies (optional)
+
+```
+
+<details>
+<summary>Alternative: Install from Source</summary>
+
+```bash
+# Create and activate environment
+conda create -n groundcua python=3.10 -y
+conda activate groundcua
+
+pip install --upgrade pip
+
+# Clone repository
+git clone https://github.com/ServiceNow/GroundCUA.git
+cd GroundCUA
+
+# Install PyTorch (adjust for your CUDA version)
+pip install torch torchvision
+
+# Install Flash Attention (recommended for faster inference)
+pip install flash-attn --no-build-isolation
+
+# Install in development mode
+pip install -r requirements.txt
+
+```
+</details>
+
+
+### Quick GroundNext Model Inference
+
+```python
+import torch
+from transformers import Qwen2_5_VLForConditionalGeneration, AutoTokenizer, AutoProcessor
+from PIL import Image
+import groundcua
+import io
+from urllib.request import urlopen
+
+model_name = "ServiceNow/GroundNext-7B-V0"
+
+# Load model and processor
+model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+    model_name,
+    torch_dtype=torch.bfloat16,
+    attn_implementation="flash_attention_2",
+    device_map="auto",
+    trust_remote_code=True
+).eval()
+
+processor = AutoProcessor.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+
+# Configure generation
+model.generation_config.temperature = groundcua.DEFAULT_TEMPERATURE
+model.generation_config.do_sample = False
+model.generation_config.use_cache = True
+
+# Load and prepare image
+url = "https://huggingface.co/datasets/ServiceNow/GroundCUA/resolve/main/images/7-Zip/001f0079a489909eb94e47c2374b7bf36ab1842e314592ce30a34d18a54eb1df.png"
+image = Image.open(io.BytesIO(urlopen(url).read()))
+image, (width, height) = groundcua.prepare_image(image)
+
+# Create messages and generate
+instruction = "Click on the 'File' button"
+messages = groundcua.create_messages(instruction, image, width, height)
+
+input_text = tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
+inputs = processor(text=[input_text], images=[image], videos=None, padding=True, return_tensors="pt").to(model.device)
+
+generated_ids = model.generate(**inputs, max_new_tokens=groundcua.DEFAULT_MAX_NEW_TOKENS)
+generated_ids_trimmed = [out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)]
+
+response = processor.batch_decode(generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+print(response)
+# Expected output: <tool_call>{"name": "computer_use", "arguments": {"action": "left_click", "coordinate": [x, y]}}</tool_call>
+```
+
+
+## Updates
+
+- **[Nov 11 2025]** 🎉 We released our [project webpage](https://groundcua.github.io), the [GroundCUA dataset](https://huggingface.co/datasets/ServiceNow/GroundCUA), and the [GroundNext-7B model](https://huggingface.co/ServiceNow/GroundNext-7B-V0)!
 
 ## Performance
 
@@ -149,98 +243,15 @@ GroundNext models also demonstrate strong agentic capabilities when integrated w
 - **Cross-Domain Excellence**: Strong performance across desktop, mobile, and web despite desktop-only training
 - **Fine-Grained Grounding**: Superior performance on small UI elements and complex workflows
 
----
-
-## 🚀 Quick Start
-
-### Installation & Setup
-
-```bash
-# Create and activate environment
-conda create -n groundcua python=3.10 -y
-conda activate groundcua
-
-pip install --upgrade pip
-
-# Clone repository
-git clone https://github.com/ServiceNow/GroundCUA.git
-cd GroundCUA
-
-# Install PyTorch (adjust for your CUDA version)
-pip install torch torchvision
-
-# Install core dependencies
-pip install -r requirements.txt
-
-# Install Flash Attention (recommended for faster inference)
-pip install flash-attn --no-build-isolation
-```
-
-
-
-### Quick GroundNext Model Inference
-
-```python
-import torch
-from transformers import Qwen2_5_VLForConditionalGeneration, AutoTokenizer, AutoProcessor
-from PIL import Image
-import groundcua_utils as groundcua
-import io
-from urllib.request import urlopen
-
-model_name = "ServiceNow/GroundNext-7B-V0"
-
-# Load model and processor
-model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
-    model_name,
-    torch_dtype=torch.bfloat16,
-    attn_implementation="flash_attention_2",
-    device_map="auto",
-    trust_remote_code=True
-).eval()
-
-processor = AutoProcessor.from_pretrained(model_name)
-tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-
-# Configure generation
-model.generation_config.temperature = groundcua.DEFAULT_TEMPERATURE
-model.generation_config.do_sample = False
-model.generation_config.use_cache = True
-
-# Load and prepare image
-url = "https://huggingface.co/datasets/ServiceNow/GroundCUA/resolve/main/images/7-Zip/001f0079a489909eb94e47c2374b7bf36ab1842e314592ce30a34d18a54eb1df.png"
-image = Image.open(io.BytesIO(urlopen(url).read()))
-image, (width, height) = groundcua.prepare_image(image)
-
-# Create messages and generate
-instruction = "Click on the 'File' button"
-messages = groundcua.create_messages(instruction, image, width, height)
-
-input_text = tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
-inputs = processor(text=[input_text], images=[image], videos=None, padding=True, return_tensors="pt").to(model.device)
-
-generated_ids = model.generate(**inputs, max_new_tokens=groundcua.DEFAULT_MAX_NEW_TOKENS)
-generated_ids_trimmed = [out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)]
-
-response = processor.batch_decode(generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
-print(response)
-# Expected output: <tool_call>{"name": "computer_use", "arguments": {"action": "left_click", "coordinate": [x, y]}}</tool_call>
-```
-
----
-
 ## 🎓 Training
 
 <div style="border-left: 6px solid #3b82f6; background: #eff6ff; padding: 12px 16px; margin: 16px 0;">
   <strong>🚧 Coming Soon:</strong> We are currently refining the training documentation and code. Complete training instructions, including supervised fine-tuning and reinforcement learning recipes, will be released in the <code>training/</code> folder soon. Stay tuned!
 </div>
 
----
-
 ## Dataset
 
 ### GroundCUA Dataset Overview
-
 
 GroundCUA is a large-scale, human-annotated desktop grounding dataset with dense supervision:
 
@@ -303,14 +314,18 @@ python eval.py \
 - **Cross-Domain Performance**: Generalization to unseen platforms
 - **Fine-Grained Performance**: Accuracy on small UI elements
 
----
 
 ## Project Structure
 
 ```
 GroundCUA/
 ├── README.md                    # This file
+├── pyproject.toml              # Package configuration
+├── PUBLISHING.md               # Guide for publishing to PyPI
 ├── assets/                      # Images and resources
+├── groundcua/                  # Main package (pip installable)
+│   ├── __init__.py             # Package initialization and utilities
+│   └── version.py              # Version information
 ├── eval/                        # Evaluation framework
 │   ├── eval.py                 # Main evaluation script
 │   ├── data.py                 # Data loading utilities
@@ -319,7 +334,6 @@ GroundCUA/
 └── training/                   # Training pipeline (documentation coming soon)
 ```
 
----
 
 ## Acknowledgements
 
@@ -331,6 +345,7 @@ We thank the following projects and teams for their contributions to the open-so
 - [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory) for the excellent SFT training framework
 - [verl](https://github.com/volcengine/verl) for the robust RL infrastructure
 - [Qwen-2.5-VL](https://huggingface.co/collections/Qwen/qwen25-vl) for the foundation vision-language models
+- [OpenCUA](https://github.com/xlang-ai/OpenCUA) for design inspiration of repository
 - The computer use and GUI automation research community
 
 ---

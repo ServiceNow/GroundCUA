@@ -139,9 +139,10 @@ pip install -r requirements.txt
 import torch
 from transformers import Qwen2_5_VLForConditionalGeneration, AutoTokenizer, AutoProcessor
 from PIL import Image
-import groundcua
-import io
+from io import BytesIO
 from urllib.request import urlopen
+
+import groundcua
 
 model_name = "ServiceNow/GroundNext-7B-V0"
 
@@ -158,13 +159,10 @@ processor = AutoProcessor.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
 
 # Configure generation
-model.generation_config.temperature = groundcua.DEFAULT_TEMPERATURE
-model.generation_config.do_sample = False
-model.generation_config.use_cache = True
+groundcua.set_generation_config(model)
 
 # Load and prepare image
-url = "https://huggingface.co/datasets/ServiceNow/GroundCUA/resolve/main/images/7-Zip/001f0079a489909eb94e47c2374b7bf36ab1842e314592ce30a34d18a54eb1df.png"
-image = Image.open(io.BytesIO(urlopen(url).read()))
+image = Image.open(BytesIO(urlopen(groundcua.SAMPLE_URL).read()))
 image, (width, height) = groundcua.prepare_image(image)
 
 # Create messages and generate
@@ -172,13 +170,13 @@ instruction = "Click on the 'File' button"
 messages = groundcua.create_messages(instruction, image, width, height)
 
 input_text = tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
-inputs = processor(text=[input_text], images=[image], videos=None, padding=True, return_tensors="pt").to(model.device)
+inputs = processor(text=[input_text], images=[image], videos=None, padding=True, return_tensors="pt")
 
-generated_ids = model.generate(**inputs, max_new_tokens=groundcua.DEFAULT_MAX_NEW_TOKENS)
-generated_ids_trimmed = [out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)]
+generated_ids = model.generate(**inputs.to(model.device), max_new_tokens=groundcua.DEFAULT_MAX_NEW_TOKENS)
+trimmed_ids = groundcua.trim_ids(generated_ids, inputs.input_ids)
 
-response = processor.batch_decode(generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
-print(response)
+response = processor.batch_decode(trimmed_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)
+print(response[0])
 # Expected output: <tool_call>{"name": "computer_use", "arguments": {"action": "left_click", "coordinate": [x, y]}}</tool_call>
 ```
 

@@ -26,8 +26,13 @@ DEFAULT_TEMPERATURE = 0.0
 DEFAULT_MAX_NEW_TOKENS = 64
 MIN_PIXELS = 78_400
 MAX_PIXELS = 6_000_000
+SAMPLE_URL = "https://huggingface.co/datasets/ServiceNow/GroundCUA/resolve/main/images/7-Zip/001f0079a489909eb94e47c2374b7bf36ab1842e314592ce30a34d18a54eb1df.png"
 
-
+def set_generation_config(model, do_sample=True, use_cache=False, temperature=DEFAULT_TEMPERATURE):
+    model.generation_config.do_sample = do_sample
+    model.generation_config.use_cache = use_cache
+    model.generation_config.temperature = temperature
+    
 def prepare_image(image, min_pixels=MIN_PIXELS, max_pixels=MAX_PIXELS):
     """
     Resize image using smart_resize for optimal model performance.
@@ -77,6 +82,9 @@ def create_messages(instruction, image, width, height):
         }
     ]
 
+def trim_ids(ids, input_ids):
+    return [out_ids[len(in_ids):] for in_ids, out_ids in zip(input_ids, ids)]
+
 
 __all__ = [
     "__version__",
@@ -85,7 +93,9 @@ __all__ = [
     "DEFAULT_MAX_NEW_TOKENS",
     "MIN_PIXELS",
     "MAX_PIXELS",
+    "SAMPLE_URL",
     "prepare_image",
     "create_messages",
+    "set_generation_config",
 ]
 

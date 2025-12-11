@@ -8,7 +8,7 @@ def load_benchmark_info(benchmark_name: str) -> Dict:
     """
     Loads benchmark information.
     """
-    info_path = "./eval/dataset_info.json"
+    info_path = "./dataset_info.json"
     if not os.path.exists(info_path):
         raise FileNotFoundError(f"Benchmark info file not found: {info_path}")
     
@@ -269,7 +269,8 @@ def standardize_sample(sample: Dict, benchmark_name: str) -> Dict:
     elif benchmark_name == "osworld-g":
         # Convert osworld-g format to standard format
         
-        with open('/mnt/home/InfiGUI-G1/data/OSWorld-G/buckets.json', 'r') as f:
+        # TODO: Change this to appropriate path
+        with open('./data/OSWorld-G/benchmark/buckets.json', 'r') as f:
             bucket_info = json.load(f)
         
         image_size = sample["image_size"]

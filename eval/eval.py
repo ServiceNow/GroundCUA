@@ -38,10 +38,10 @@ def prepare_sample_data(sample: Dict, benchmark_info: Dict, max_image_pixels: in
     bbox = sample["bbox"].copy()
     
     # Resize image
-    new_width, new_height = resize_image(original_width, original_height, max_image_pixels)
+    # new_width, new_height = resize_image(original_width, original_height, max_image_pixels)
     
     # Further resize using smart_resize
-    new_height, new_width = smart_resize(new_height, new_width, max_pixels=12845056)
+    new_height, new_width = smart_resize(original_height, original_width, max_pixels=max_image_pixels, factor=28)
     image = image.resize((new_width, new_height))
     
     # Update bounding box coordinates to the new image dimensions
@@ -95,7 +95,7 @@ def main():
     
     parser.add_argument("model_path", type=str, help="Path to the model")
     parser.add_argument("--benchmark", "-b", type=str, default="screenspot-pro", help="Name of the benchmark to evaluate")
-    parser.add_argument("--prompt", type=str, default="star-cua", choices=list(PROMPT_PROCESSORS.keys()), help="Name of the prompt processor to use")
+    parser.add_argument("--prompt", type=str, default="groundcua", choices=list(PROMPT_PROCESSORS.keys()), help="Name of the prompt processor to use")
     parser.add_argument("--engine", type=str, default="vllm", choices=['vllm', 'hf'], help="Name of the engine to use")
     parser.add_argument("--tensor-parallel", "-tp", type=int, default=4, help="Tensor parallelism size")
     parser.add_argument("--batch-size", type=int, default=16, help="Batch size")
@@ -107,6 +107,8 @@ def main():
     parser.add_argument("--debug-mode", type=int, default=0, help="Whether to enable debug mode (1=enable, 0=disable)")
     parser.add_argument("--model-type", type=str, default='qwen2.5vl', choices=['qwen2.5vl', 'qwen2vl'], help="Output model name, extracted from model path if not specified")
     parser.add_argument("--temperature", "-t", type=float, default=0.0, help="Generation temperature")
+    parser.add_argument("--output-dir", type=str, default=None, help="Output directory for evaluation results (default: ./output/{model_name}/{benchmark})")
+    parser.add_argument("--cache-dir", type=str, default=None, help="Cache directory for processed data (default: ./cache)")
     
     args = parser.parse_args()
     
@@ -136,20 +138,25 @@ def main():
         model_name = os.path.basename(os.path.normpath(args.model_path))
         
     
-    output_dir = f"./output/{model_name}/{args.benchmark}"
-    if args.engine == 'hf':
-        output_dir += '_hf'
+    if args.output_dir:
+        output_dir = os.path.expanduser(args.output_dir)
+    else:
+        output_dir = os.path.join("output", model_name, args.benchmark)
+        if args.engine == 'hf':
+            output_dir += '_hf'
+    output_dir = os.path.abspath(output_dir)
     print('Output directory:', output_dir)
     os.makedirs(output_dir, exist_ok=True)
     
     # Initialize model
-    max_image_pixels = args.max_image_tokens * 28 * 28 if args.max_image_tokens > 0 else 16384 * 28 * 28
+    max_image_pixels = 12845056  # Fixed at 6 million pixels
     print(f"Initializing model, max image pixels: {max_image_pixels}")
     
     if args.model_type in ['qwen2.5vl', 'qwen2vl']:
         if args.engine == 'vllm':
             print('Using VLLM engine')
             from models.qwen2vl import Qwen2VL as Qwen2VL_VLLM
+            print(f"Using {args.model_path} VLLM model")
             llm = Qwen2VL_VLLM(
                 model_path=args.model_path,
                 max_model_len=max_image_pixels//28//28 + 1024,
@@ -197,9 +204,15 @@ def main():
     processed_bboxes = []
 
 
-    processed_cache_dir = f"./cache/b-{benchmark_info['name']}_p-{args.prompt}_mit-{args.max_image_tokens}.pkl"
+    if args.cache_dir:
+        cache_base_dir = os.path.expanduser(args.cache_dir)
+    else:
+        cache_base_dir = "cache"
+    
+    cache_base_dir = os.path.abspath(cache_base_dir)
+    processed_cache_dir = os.path.join(cache_base_dir, f"b-{benchmark_info['name']}_p-{args.prompt}_mit-{args.max_image_tokens}.pkl")
     if not args.no_cache:
-        os.makedirs(os.path.dirname(processed_cache_dir), exist_ok=True)
+        os.makedirs(cache_base_dir, exist_ok=True)
 
     if os.path.exists(processed_cache_dir) and not debug_mode and not args.no_cache:
         print(f"Loading processed data cache from {processed_cache_dir}")

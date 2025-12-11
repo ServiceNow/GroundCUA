@@ -10,7 +10,7 @@ class Qwen2VL:
         self,
         model_path: str = "",
         tensor_parallel_size: int = 1,
-        gpu_memory_utilization: float = 0.99,
+        gpu_memory_utilization: float = 0.9,
         enforce_eager: bool = False,
         max_model_len: int = 8192,
         limit_mm_per_prompt: Dict[str, int] = {"image": 1, "video": 0},
@@ -112,9 +112,9 @@ class Qwen2VL:
         self,
         messages: Union[List[Dict[str, Any]], List[List[Dict[str, Any]]]],
         images: Optional[Union[Image.Image, List[Image.Image], List[List[Image.Image]]]] = None,
-        temperature: float = 0.2,
+        temperature: float = 0.0,
         max_tokens: int = 2048,
-        top_p: float = 0.95,
+        top_p: float = 1.0,
         **kwargs
     ) -> Union[str, List[str]]:
         """

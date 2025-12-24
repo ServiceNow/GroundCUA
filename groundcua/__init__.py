@@ -49,7 +49,7 @@ def prepare_image(image, min_pixels=MIN_PIXELS, max_pixels=MAX_PIXELS):
     
     width, height = image.size
     resized_height, resized_width = smart_resize(
-        height, width, min_pixels=min_pixels, max_pixels=max_pixels
+        height, width, factor=28, min_pixels=min_pixels, max_pixels=max_pixels
     )
     resized_image = image.resize((resized_width, resized_height))
     return resized_image, (resized_width, resized_height)

@@ -1,4 +1,4 @@
-# CUA_Suite: Trajectory Synthesis Pipeline
+# VideoCUA: Trajectory Synthesis Pipeline
 
 End-to-end pipeline for synthesizing Chain-of-Thought (CoT) trajectories from the [ActCUA](https://huggingface.co/datasets/AgentsResearch/ActCUA) dataset. Converts raw human demonstration videos and action logs into rich, LLM-annotated trajectories with observation, thought, action, and reflection for each step.
 
@@ -290,7 +290,7 @@ To re-process, delete the corresponding output files.
 ## File Structure
 
 ```
-CUA_Suite/
+VideoCUA/
   README.md                        # This file
   requirements.txt                 # Python dependencies
   download_data.sh                 # Download from HuggingFace + extract ZIPs

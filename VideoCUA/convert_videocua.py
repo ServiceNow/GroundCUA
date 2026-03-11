@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Convert ActCUA data format to opencua_trace.jsonl format required by gen_cot.py.
+Convert VideoCUA data format to opencua_trace.jsonl format required by gen_cot.py.
 
-ActCUA format (action_log.json):
+VideoCUA format (action_log.json):
 {
     "task_id": 46551,
     "task_instruction": "Switch to Wireframe mode...",
@@ -25,10 +25,10 @@ Output format (opencua_trace.jsonl):
 
 Usage:
     # Convert all tasks in a directory
-    python convert_actcua.py --data_dir ActCUA/data --output_dir actcua_processed
+    python convert_videocua.py --data_dir VideoCUA/data --output_dir videocua_processed
 
     # Convert specific platforms only
-    python convert_actcua.py --data_dir ActCUA/data --output_dir actcua_processed --platforms "Blender,GIMP"
+    python convert_videocua.py --data_dir VideoCUA/data --output_dir videocua_processed --platforms "Blender,GIMP"
 """
 
 import argparse
@@ -175,7 +175,7 @@ def action_to_code(action: Dict, resolution: tuple) -> str:
 
 def convert_task(task_dir: str, output_base_dir: Optional[str] = None) -> Dict:
     """
-    Convert a single ActCUA task to opencua_trace.jsonl format.
+    Convert a single VideoCUA task to opencua_trace.jsonl format.
 
     Args:
         task_dir: Path to task directory containing action_log.json and video/
@@ -283,13 +283,13 @@ def convert_task_wrapper(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Convert ActCUA data format to opencua_trace.jsonl format"
+        description="Convert VideoCUA data format to opencua_trace.jsonl format"
     )
     parser.add_argument(
         "--data_dir",
         type=str,
         required=True,
-        help="Path to ActCUA/data directory containing platform folders"
+        help="Path to VideoCUA/data directory containing platform folders"
     )
     parser.add_argument(
         "--output_dir",

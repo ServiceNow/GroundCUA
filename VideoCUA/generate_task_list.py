@@ -3,8 +3,8 @@
 Generate task list JSON pointing to CoT trajectory files for downstream use.
 
 Usage:
-    python generate_task_list.py --data_dir ./actcua_processed --output task_list_cot.json
-    python generate_task_list.py --data_dir ./actcua_processed --output task_list_cot.json --model_suffix anthropic-claude-sonnet-4.5_cot_v1
+    python generate_task_list.py --data_dir ./videocua_processed --output task_list_cot.json
+    python generate_task_list.py --data_dir ./videocua_processed --output task_list_cot.json --model_suffix anthropic-claude-sonnet-4.5_cot_v1
 """
 
 import argparse

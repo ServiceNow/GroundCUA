@@ -1,4 +1,4 @@
-# Core dependencies for CUA_Suite trajectory synthesis pipeline
+# Core dependencies for VideoCUA trajectory synthesis pipeline
 
 # Video processing (frame extraction)
 opencv-python>=4.5.0

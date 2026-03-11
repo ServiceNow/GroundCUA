@@ -4,7 +4,7 @@ Batch merge script for CoT results across multiple tasks and platforms.
 
 Usage:
     python batch_merge.py \
-        --data_dir actcua_processed \
+        --data_dir videocua_processed \
         --model_folder anthropic-claude-sonnet-4.5_cot_v1 \
         --output_file final_cot_results.jsonl
 """
@@ -197,11 +197,11 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python batch_merge.py --data_dir actcua_processed --model_folder anthropic-claude-sonnet-4.5_cot_v1
+  python batch_merge.py --data_dir videocua_processed --model_folder anthropic-claude-sonnet-4.5_cot_v1
 
-  python batch_merge.py --data_dir actcua_processed --model_folder anthropic-claude-sonnet-4.5_cot_v1 --output_file results/all_cot.jsonl
+  python batch_merge.py --data_dir videocua_processed --model_folder anthropic-claude-sonnet-4.5_cot_v1 --output_file results/all_cot.jsonl
 
-  python batch_merge.py --data_dir actcua_processed --model_folder anthropic-claude-sonnet-4.5_cot_v1 --no_skip_existing
+  python batch_merge.py --data_dir videocua_processed --model_folder anthropic-claude-sonnet-4.5_cot_v1 --no_skip_existing
         """
     )
 

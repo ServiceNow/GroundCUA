@@ -1,18 +1,18 @@
 # VideoCUA: Trajectory Synthesis Pipeline
 
-End-to-end pipeline for synthesizing Chain-of-Thought (CoT) trajectories from the [ActCUA](https://huggingface.co/datasets/AgentsResearch/ActCUA) dataset. Converts raw human demonstration videos and action logs into rich, LLM-annotated trajectories with observation, thought, action, and reflection for each step.
+End-to-end pipeline for synthesizing Chain-of-Thought (CoT) trajectories from the [VideoCUA](https://huggingface.co/datasets/AgentsResearch/ActCUA) dataset. Converts raw human demonstration videos and action logs into rich, LLM-annotated trajectories with observation, thought, action, and reflection for each step.
 
 ## Pipeline Overview
 
 ```
-HuggingFace (ActCUA)          download_data.sh
+HuggingFace (VideoCUA)          download_data.sh
     |
     v
 raw_data/*.zip                 (87 platform ZIPs)
     |
     v
 data/{Platform}/{task_id}/     (extracted: action_log.json + video/)
-    |                          convert_actcua.py
+    |                          convert_videocua.py
     v
 output/{Platform}/{task_id}/   (opencua_trace.jsonl + processed_images/)
     |                          gen_cot.py
@@ -51,7 +51,7 @@ export OPENAI_API_KEY="your-key-here"
 bash run_pipeline.sh
 ```
 
-This will download the ActCUA dataset, convert all tasks, and generate CoT annotations. See [Configuration](#configuration) for customization.
+This will download the VideoCUA dataset, convert all tasks, and generate CoT annotations. See [Configuration](#configuration) for customization.
 
 ## Step-by-Step Usage
 
@@ -60,14 +60,14 @@ If you prefer to run each step manually:
 ### Step 1: Download Data
 
 ```bash
-bash download_data.sh --repo AgentsResearch/ActCUA --output_dir ./ActCUA
+bash download_data.sh --repo AgentsResearch/ActCUA --output_dir ./VideoCUA
 ```
 
 This downloads the dataset and extracts platform ZIP files from `raw_data/` into `data/`.
 
 **After this step:**
 ```
-ActCUA/
+VideoCUA/
   data/
     Blender/
       46551/
@@ -82,9 +82,9 @@ ActCUA/
 ### Step 2: Convert to Trace Format
 
 ```bash
-python convert_actcua.py \
-    --data_dir ./ActCUA/data \
-    --output_dir ./actcua_processed \
+python convert_videocua.py \
+    --data_dir ./VideoCUA/data \
+    --output_dir ./videocua_processed \
     --num_workers 4
 ```
 
@@ -95,7 +95,7 @@ Options:
 
 **After this step:**
 ```
-actcua_processed/
+videocua_processed/
   task_list.json               # List of all converted tasks
   Blender/
     46551/
@@ -111,7 +111,7 @@ actcua_processed/
 
 ```bash
 python gen_cot.py \
-    --task_list_path ./actcua_processed/task_list.json \
+    --task_list_path ./videocua_processed/task_list.json \
     --model anthropic/claude-sonnet-4.5 \
     --num_threads 4 \
     --suffix cot_v1
@@ -127,7 +127,7 @@ Options:
 
 **After this step:**
 ```
-actcua_processed/
+videocua_processed/
   Blender/
     46551/
       anthropic-claude-sonnet-4.5_cot_v1/
@@ -146,8 +146,8 @@ Create a task list pointing to CoT trajectory files for downstream use:
 
 ```bash
 python generate_task_list.py \
-    --data_dir ./actcua_processed \
-    --output ./actcua_processed/task_list_cot.json \
+    --data_dir ./videocua_processed \
+    --output ./videocua_processed/task_list_cot.json \
     --model_suffix anthropic-claude-sonnet-4.5_cot_v1
 ```
 
@@ -158,8 +158,8 @@ python generate_task_list.py \
 | Flag | Default | Description |
 |------|---------|-------------|
 | `--hf_repo` | `AgentsResearch/ActCUA` | HuggingFace dataset repo ID |
-| `--data_dir` | `./ActCUA` | Local directory for raw data |
-| `--output_dir` | `./actcua_processed` | Output directory for processed data |
+| `--data_dir` | `./VideoCUA` | Local directory for raw data |
+| `--output_dir` | `./videocua_processed` | Output directory for processed data |
 | `--model` | `anthropic/claude-sonnet-4.5` | LLM model for CoT generation |
 | `--suffix` | `cot_v1` | Experiment suffix for output folder |
 | `--num_threads` | `4` | Parallel threads for LLM calls |
@@ -294,7 +294,7 @@ VideoCUA/
   README.md                        # This file
   requirements.txt                 # Python dependencies
   download_data.sh                 # Download from HuggingFace + extract ZIPs
-  convert_actcua.py                # Convert raw data to opencua_trace format
+  convert_videocua.py                # Convert raw data to opencua_trace format
   gen_cot.py                       # Generate CoT annotations via LLM
   merge_json.py                    # Merge per-step JSONs into JSONL
   batch_merge.py                   # Batch merge across tasks/platforms

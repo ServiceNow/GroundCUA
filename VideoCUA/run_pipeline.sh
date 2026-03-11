@@ -1,9 +1,9 @@
 #!/bin/bash
 # =============================================================================
-# CUA_Suite: End-to-End Trajectory Synthesis Pipeline
+# VideoCUA: End-to-End Trajectory Synthesis Pipeline
 #
 # This script runs the complete pipeline:
-#   1. Download ActCUA data from HuggingFace
+#   1. Download VideoCUA data from HuggingFace
 #   2. Extract ZIP files
 #   3. Convert raw data to opencua_trace format
 #   4. Generate CoT (Chain-of-Thought) trajectory annotations
@@ -25,10 +25,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Data source
 HF_REPO="AgentsResearch/ActCUA"         # HuggingFace dataset repository
-DATA_DIR="./ActCUA"                      # Where to download/find the raw data
+DATA_DIR="./VideoCUA"                    # Where to download/find the raw data
 
 # Conversion
-OUTPUT_DIR="./actcua_processed"          # Where to put processed data
+OUTPUT_DIR="./videocua_processed"        # Where to put processed data
 NUM_WORKERS=4                            # Parallel workers for video frame extraction
 PLATFORMS=""                             # Filter platforms (comma-separated, empty=all)
 
@@ -82,8 +82,8 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Data Options:"
             echo "  --hf_repo REPO        HuggingFace repo ID (default: AgentsResearch/ActCUA)"
-            echo "  --data_dir DIR         Local data directory (default: ./ActCUA)"
-            echo "  --output_dir DIR       Output for processed data (default: ./actcua_processed)"
+            echo "  --data_dir DIR         Local data directory (default: ./VideoCUA)"
+            echo "  --output_dir DIR       Output for processed data (default: ./videocua_processed)"
             echo "  --num_workers N        Parallel workers for conversion (default: 4)"
             echo "  --platforms LIST       Comma-separated platform filter (default: all)"
             echo ""
@@ -151,7 +151,7 @@ fi
 # DISPLAY CONFIGURATION
 # -----------------------------------------------------------------------------
 echo "=============================================="
-echo "CUA_Suite: Trajectory Synthesis Pipeline"
+echo "VideoCUA: Trajectory Synthesis Pipeline"
 echo "=============================================="
 echo ""
 echo "Configuration:"
@@ -201,12 +201,12 @@ fi
 # STEP 2: CONVERT DATA
 # -----------------------------------------------------------------------------
 if [ "$SKIP_CONVERT" = false ]; then
-    echo "[Step 2/3] Converting ActCUA data to opencua_trace format..."
+    echo "[Step 2/3] Converting VideoCUA data to opencua_trace format..."
 
     CONVERT_ARGS="--data_dir $ACTUAL_DATA_DIR --output_dir $OUTPUT_DIR --task_list_output $TASK_LIST --num_workers $NUM_WORKERS"
     [ -n "$PLATFORMS" ] && CONVERT_ARGS="$CONVERT_ARGS --platforms $PLATFORMS"
 
-    python "$SCRIPT_DIR/convert_actcua.py" $CONVERT_ARGS
+    python "$SCRIPT_DIR/convert_videocua.py" $CONVERT_ARGS
 
     if [ $? -ne 0 ]; then
         echo "Error: Conversion failed"

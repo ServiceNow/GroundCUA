@@ -1,14 +1,14 @@
 #!/bin/bash
 # =============================================================================
-# Download ActCUA data from HuggingFace and extract ZIP files.
+# Download VideoCUA data from HuggingFace and extract ZIP files.
 #
 # This script:
-#   1. Downloads the ActCUA dataset from HuggingFace
+#   1. Downloads the VideoCUA dataset from HuggingFace
 #   2. Extracts platform ZIP files from raw_data/ into data/
 #
 # USAGE:
 #   bash download_data.sh
-#   bash download_data.sh --repo "AgentsResearch/ActCUA" --output_dir ./ActCUA
+#   bash download_data.sh --repo "AgentsResearch/ActCUA" --output_dir ./VideoCUA
 #   bash download_data.sh --skip_download   # Only extract ZIPs
 # =============================================================================
 
@@ -18,7 +18,7 @@ set -e
 # CONFIGURATION (override via command-line arguments)
 # -----------------------------------------------------------------------------
 HF_REPO="AgentsResearch/ActCUA"
-OUTPUT_DIR="./ActCUA"
+OUTPUT_DIR="./VideoCUA"
 SKIP_DOWNLOAD=false
 
 # -----------------------------------------------------------------------------
@@ -43,7 +43,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Options:"
             echo "  --repo REPO_ID        HuggingFace dataset repo (default: AgentsResearch/ActCUA)"
-            echo "  --output_dir DIR       Local directory to download into (default: ./ActCUA)"
+            echo "  --output_dir DIR       Local directory to download into (default: ./VideoCUA)"
             echo "  --skip_download        Skip download, only extract ZIPs"
             echo ""
             exit 0
@@ -56,7 +56,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 echo "=============================================="
-echo "ActCUA Data Download & Extract"
+echo "VideoCUA Data Download & Extract"
 echo "=============================================="
 echo "  HF Repo:    $HF_REPO"
 echo "  Output Dir: $OUTPUT_DIR"

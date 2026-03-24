@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Convert VideoCUA data format to opencua_trace.jsonl format required by gen_cot.py.
+Convert VideoCUA data format to trace.jsonl format required by gen_cot.py.
 
 VideoCUA format (action_log.json):
 {
@@ -13,7 +13,7 @@ VideoCUA format (action_log.json):
     ]
 }
 
-Output format (opencua_trace.jsonl):
+Output format (trace.jsonl):
 {
     "task_id": "46551",
     "instruction": "On this Blender platform, please Switch to Wireframe mode...",
@@ -34,6 +34,8 @@ Usage:
 import argparse
 import json
 import os
+os.environ["OPENCV_LOG_LEVEL"] = "SILENT"
+os.environ["OPENCV_FFMPEG_LOGLEVEL"] = "-8"
 import cv2
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -115,7 +117,7 @@ def action_to_code(action: Dict, resolution: tuple) -> str:
         x, y = params.get("x"), params.get("y")
         nx, ny = fmt_xy(x, y)
         key = params.get("text", "left").lower() if params.get("text") in ["Left", "Right", "Middle"] else "left"
-        num_clicks = params.get("numClicks", 1)
+        num_clicks = params.get("numClicks") or 1
 
         if key == "right":
             return f"pyautogui.rightClick(x={nx}, y={ny})"
@@ -175,7 +177,7 @@ def action_to_code(action: Dict, resolution: tuple) -> str:
 
 def convert_task(task_dir: str, output_base_dir: Optional[str] = None) -> Dict:
     """
-    Convert a single VideoCUA task to opencua_trace.jsonl format.
+    Convert a single VideoCUA task to trace.jsonl format. (OpenCUA style trace with code values)
 
     Args:
         task_dir: Path to task directory containing action_log.json and video/
@@ -210,7 +212,7 @@ def convert_task(task_dir: str, output_base_dir: Optional[str] = None) -> Dict:
 
     # Find video file
     video_dir = task_dir / "video"
-    video_files = list(video_dir.glob("*.mp4")) + list(video_dir.glob("*.avi")) + list(video_dir.glob("*.mov"))
+    video_files = [f for f in video_dir.iterdir() if f.suffix.lower() in (".mp4", ".avi", ".mov", ".webm")]
     if not video_files:
         raise FileNotFoundError(f"No video file found in {video_dir}")
     video_path = str(video_files[0])
@@ -253,7 +255,7 @@ def convert_task(task_dir: str, output_base_dir: Optional[str] = None) -> Dict:
     }
 
     # Save to jsonl
-    traj_path = output_dir / "opencua_trace.jsonl"
+    traj_path = output_dir / "trace.jsonl"
     with open(traj_path, 'w') as f:
         json.dump(output_data, f, ensure_ascii=False)
         f.write("\n")
@@ -283,7 +285,7 @@ def convert_task_wrapper(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Convert VideoCUA data format to opencua_trace.jsonl format"
+        description="Convert VideoCUA data format to trace.jsonl format"
     )
     parser.add_argument(
         "--data_dir",
@@ -360,10 +362,8 @@ def main():
 
     if errors:
         print(f"\n{len(errors)} errors occurred:")
-        for e in errors[:10]:
+        for e in errors:
             print(f"  - {e}")
-        if len(errors) > 10:
-            print(f"  ... and {len(errors) - 10} more")
 
     # Save task list
     task_list_path = args.task_list_output or os.path.join(args.output_dir, "task_list.json")

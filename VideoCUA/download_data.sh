@@ -8,7 +8,7 @@
 #
 # USAGE:
 #   bash download_data.sh
-#   bash download_data.sh --repo "AgentsResearch/ActCUA" --output_dir ./VideoCUA
+#   bash download_data.sh --repo "ServiceNow/VideoCUA" --output_dir ./VideoCUA
 #   bash download_data.sh --skip_download   # Only extract ZIPs
 # =============================================================================
 
@@ -17,7 +17,7 @@ set -e
 # -----------------------------------------------------------------------------
 # CONFIGURATION (override via command-line arguments)
 # -----------------------------------------------------------------------------
-HF_REPO="AgentsResearch/ActCUA"
+HF_REPO="ServiceNow/VideoCUA"
 OUTPUT_DIR="./VideoCUA"
 SKIP_DOWNLOAD=false
 
@@ -42,7 +42,7 @@ while [[ $# -gt 0 ]]; do
             echo "Usage: $0 [options]"
             echo ""
             echo "Options:"
-            echo "  --repo REPO_ID        HuggingFace dataset repo (default: AgentsResearch/ActCUA)"
+            echo "  --repo REPO_ID        HuggingFace dataset repo (default: ServiceNow/VideoCUA)"
             echo "  --output_dir DIR       Local directory to download into (default: ./VideoCUA)"
             echo "  --skip_download        Skip download, only extract ZIPs"
             echo ""

@@ -1,6 +1,6 @@
 # VideoCUA: Trajectory Synthesis Pipeline
 
-End-to-end pipeline for synthesizing Chain-of-Thought (CoT) trajectories from the [VideoCUA](https://huggingface.co/datasets/AgentsResearch/ActCUA) dataset. Converts raw human demonstration videos and action logs into rich, LLM-annotated trajectories with observation, thought, action, and reflection for each step.
+End-to-end pipeline for synthesizing Chain-of-Thought (CoT) trajectories from the [VideoCUA](https://huggingface.co/datasets/ServiceNow/VideoCUA) dataset. Converts raw human demonstration videos and action logs into rich, LLM-annotated trajectories with observation, thought, action, and reflection for each step.
 
 ## Pipeline Overview
 
@@ -14,7 +14,7 @@ raw_data/*.zip                 (87 platform ZIPs)
 data/{Platform}/{task_id}/     (extracted: action_log.json + video/)
     |                          convert_videocua.py
     v
-output/{Platform}/{task_id}/   (opencua_trace.jsonl + processed_images/)
+output/{Platform}/{task_id}/   (trace.jsonl + processed_images/)
     |                          gen_cot.py
     v
 output/{Platform}/{task_id}/   (CoT-annotated trajectories with
@@ -51,7 +51,13 @@ export OPENAI_API_KEY="your-key-here"
 bash run_pipeline.sh
 ```
 
-This will download the VideoCUA dataset, convert all tasks, and generate CoT annotations. See [Configuration](#configuration) for customization.
+`run_pipeline.sh` is a single wrapper that chains all three steps above in sequence:
+
+1. **Download & Extract** -- calls `download_data.sh` to pull the dataset from HuggingFace and unzip every platform ZIP into `data/`.
+2. **Convert** -- calls `convert_videocua.py` to extract video frames at each action timestamp and produce a standardized OpenCUA-style `trace.jsonl` per task.
+3. **Generate CoT** -- calls `gen_cot.py` to send each (image, action) step to an LLM and produce observation/thought/action/reflection annotations, then calls `generate_task_list.py` to build a final task list pointing to the CoT trajectories.
+
+Each step can be skipped independently (`--skip_download`, `--skip_convert`, `--skip_cot`), so you can re-enter the pipeline at any stage. All paths, the LLM model, threading, and platform filters are configurable via flags -- see [Configuration](#configuration) for the full list.
 
 ## Step-by-Step Usage
 
@@ -60,7 +66,7 @@ If you prefer to run each step manually:
 ### Step 1: Download Data
 
 ```bash
-bash download_data.sh --repo AgentsResearch/ActCUA --output_dir ./VideoCUA
+bash download_data.sh --repo ServiceNow/VideoCUA --output_dir ./VideoCUA
 ```
 
 This downloads the dataset and extracts platform ZIP files from `raw_data/` into `data/`.
@@ -99,7 +105,7 @@ videocua_processed/
   task_list.json               # List of all converted tasks
   Blender/
     46551/
-      opencua_trace.jsonl       # Standardized trajectory
+      trace.jsonl       # Standardized trajectory
       processed_images/         # Video frames at each action timestamp
         0.png
         1.png
@@ -112,16 +118,27 @@ videocua_processed/
 ```bash
 python gen_cot.py \
     --task_list_path ./videocua_processed/task_list.json \
-    --model anthropic/claude-sonnet-4.5 \
+    --model claude-sonnet-4.5 \
     --num_threads 4 \
     --suffix cot_v1
+```
+
+To do a quick test run on the first 3 tasks:
+
+```bash
+python gen_cot.py \
+    --task_list_path ./videocua_processed/task_list.json \
+    --model anthropic/claude-sonnet-4.5 \
+    --num_threads 4 \
+    --suffix cot_v1 \
+    --max_num 3
 ```
 
 Options:
 - `--model` - See [Supported Models](#supported-models) below
 - `--base_url` - Custom API endpoint (for vLLM or other OpenAI-compatible servers)
 - `--num_threads` - Number of parallel LLM calls
-- `--max_num 10` - Process only the first N tasks (useful for testing)
+- `--max_num N` - Process only the first N tasks (useful for testing)
 - `--need_double_check` - Extra LLM pass to refine annotations
 - `--no_auto_merge` - Skip automatic JSONL merge after processing
 
@@ -137,7 +154,7 @@ videocua_processed/
             000.json            # Step 0: observation, thought, action, reflection
             001.json            # Step 1
             ...
-        opencua_trace_with_cot.jsonl  # Merged: all steps in one file
+        trace_with_cot.jsonl  # Merged: all steps in one file
 ```
 
 ### Step 4: Generate CoT Task List (Optional)
@@ -157,7 +174,7 @@ python generate_task_list.py \
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--hf_repo` | `AgentsResearch/ActCUA` | HuggingFace dataset repo ID |
+| `--hf_repo` | `ServiceNow/VideoCUA` | HuggingFace dataset repo ID |
 | `--data_dir` | `./VideoCUA` | Local directory for raw data |
 | `--output_dir` | `./videocua_processed` | Output directory for processed data |
 | `--model` | `anthropic/claude-sonnet-4.5` | LLM model for CoT generation |
@@ -208,7 +225,7 @@ For all providers, `API_KEY` can be used as a universal fallback.
 }
 ```
 
-### Intermediate: `opencua_trace.jsonl`
+### Intermediate: `trace.jsonl`
 
 ```json
 {
@@ -294,7 +311,7 @@ VideoCUA/
   README.md                        # This file
   requirements.txt                 # Python dependencies
   download_data.sh                 # Download from HuggingFace + extract ZIPs
-  convert_videocua.py                # Convert raw data to opencua_trace format
+  convert_videocua.py              # Convert raw data to trace format
   gen_cot.py                       # Generate CoT annotations via LLM
   merge_json.py                    # Merge per-step JSONs into JSONL
   batch_merge.py                   # Batch merge across tasks/platforms
@@ -311,4 +328,4 @@ VideoCUA/
 
 ## Acknowledgement
 
-This codebase includes components adapted from the [OpenCUA project](https://github.com/xlang-ai/OpenCUA).
+This codebase includes components (i.e. trace/trajectory generation) adapted from the [OpenCUA project](https://github.com/xlang-ai/OpenCUA).

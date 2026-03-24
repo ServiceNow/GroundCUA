@@ -27,7 +27,7 @@ def find_cot_trajectories(data_dir: str, model_suffix: Optional[str] = None) -> 
     data_path = Path(data_dir).resolve()
     tasks = []
 
-    # Pattern: data_dir/AppName/task_id/model_suffix/{task_id_cot.jsonl OR opencua_trace_with_cot.jsonl}
+    # Pattern: data_dir/AppName/task_id/model_suffix/{task_id_cot.jsonl OR trace_with_cot.jsonl}
     for cot_file in data_path.rglob("*_cot.jsonl"):
         try:
             model_folder = cot_file.parent
@@ -43,9 +43,9 @@ def find_cot_trajectories(data_dir: str, model_suffix: Optional[str] = None) -> 
 
             # Accept both filename formats:
             # 1. {task_id}_cot.jsonl (legacy format)
-            # 2. opencua_trace_with_cot.jsonl (gen_cot.py output)
+            # 2. trace_with_cot.jsonl (gen_cot.py output)
             expected_filename_legacy = f"{task_id}_cot.jsonl"
-            expected_filename_new = "opencua_trace_with_cot.jsonl"
+            expected_filename_new = "trace_with_cot.jsonl"
 
             if cot_file.name != expected_filename_legacy and cot_file.name != expected_filename_new:
                 print(f"Warning: Skipping {cot_file} - unexpected filename format")

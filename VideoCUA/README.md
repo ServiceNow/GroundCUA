@@ -276,17 +276,6 @@ After all steps are processed, an LLM evaluates the full trajectory:
 
 All coordinates are normalized to `[0, 1]` range.
 
-## Resume Capability
-
-The pipeline supports resuming from where it left off:
-
-- **gen_cot.py** skips steps that already have output JSON files (e.g., `000.json`, `001.json`)
-- **gen_cot.py** skips tasks that are already fully processed
-- **download_data.sh** skips extraction if `data/` already exists
-- **batch_merge.py** skips tasks that already have merged JSONL files
-
-To re-process, delete the corresponding output files.
-
 ## File Structure
 
 ```

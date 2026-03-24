@@ -1,0 +1,28 @@
+# Core dependencies for VideoCUA trajectory synthesis pipeline
+
+# Video processing (frame extraction)
+opencv-python>=4.5.0
+
+# Image processing
+Pillow>=9.0.0
+
+# LLM API client (OpenAI-compatible, used for Claude/GPT/Qwen via OpenRouter)
+openai>=1.0.0
+
+# Retry logic for API calls
+backoff>=2.0.0
+
+# Fast JSON parsing
+orjson>=3.8.0
+
+# Data validation
+pydantic>=2.0.0
+
+# Progress bars
+tqdm>=4.60.0
+
+# Structured logging
+loguru>=0.6.0
+
+# HuggingFace CLI (for downloading datasets)
+huggingface_hub[cli]>=0.20.0

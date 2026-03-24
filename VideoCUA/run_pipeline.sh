@@ -5,7 +5,7 @@
 # This script runs the complete pipeline:
 #   1. Download VideoCUA data from HuggingFace
 #   2. Extract ZIP files
-#   3. Convert raw data to opencua_trace format
+#   3. Convert raw data to trace format
 #   4. Generate CoT (Chain-of-Thought) trajectory annotations
 #
 # USAGE:
@@ -24,7 +24,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # -----------------------------------------------------------------------------
 
 # Data source
-HF_REPO="AgentsResearch/ActCUA"         # HuggingFace dataset repository
+HF_REPO="ServiceNow/VideoCUA"         # HuggingFace dataset repository
 DATA_DIR="./VideoCUA"                    # Where to download/find the raw data
 
 # Conversion
@@ -81,7 +81,7 @@ while [[ $# -gt 0 ]]; do
             echo "Usage: $0 [options]"
             echo ""
             echo "Data Options:"
-            echo "  --hf_repo REPO        HuggingFace repo ID (default: AgentsResearch/ActCUA)"
+            echo "  --hf_repo REPO        HuggingFace repo ID (default: ServiceNow/VideoCUA)"
             echo "  --data_dir DIR         Local data directory (default: ./VideoCUA)"
             echo "  --output_dir DIR       Output for processed data (default: ./videocua_processed)"
             echo "  --num_workers N        Parallel workers for conversion (default: 4)"
@@ -168,7 +168,7 @@ echo "  Num Threads:   $NUM_THREADS"
 echo ""
 echo "Steps to run:"
 [ "$SKIP_DOWNLOAD" = false ] && echo "  [x] Step 1: Download & extract data"
-[ "$SKIP_CONVERT" = false ] && echo "  [x] Step 2: Convert to opencua_trace format"
+[ "$SKIP_CONVERT" = false ] && echo "  [x] Step 2: Convert to trace format"
 [ "$SKIP_COT" = false ] && echo "  [x] Step 3: Generate CoT annotations"
 echo "=============================================="
 echo ""
@@ -201,7 +201,7 @@ fi
 # STEP 2: CONVERT DATA
 # -----------------------------------------------------------------------------
 if [ "$SKIP_CONVERT" = false ]; then
-    echo "[Step 2/3] Converting VideoCUA data to opencua_trace format..."
+    echo "[Step 2/3] Converting VideoCUA data to trace format..."
 
     CONVERT_ARGS="--data_dir $ACTUAL_DATA_DIR --output_dir $OUTPUT_DIR --task_list_output $TASK_LIST --num_workers $NUM_WORKERS"
     [ -n "$PLATFORMS" ] && CONVERT_ARGS="$CONVERT_ARGS --platforms $PLATFORMS"
